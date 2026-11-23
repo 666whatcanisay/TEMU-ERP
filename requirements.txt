@@ -1,0 +1,4 @@
+# 本项目运行时不依赖任何第三方 Python 包。
+# 后端仅使用标准库：http.server, sqlite3, csv, json, hashlib, urllib, re, pathlib, datetime, dataclasses, typing
+# 前端为原生 HTML/CSS/JS，无需构建步骤。
+# 此文件保留为依赖声明占位；如后续引入第三方包，须在此固定版本并复核许可证。

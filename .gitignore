@@ -1,0 +1,41 @@
+# 本地数据与缓存（不纳入版本库）
+data/
+.cache/
+*.pyc
+__pycache__/
+
+# 凭据与环境变量样例之外的真实密钥（不提交）
+.env
+.dsh/
+*.credentials.yaml
+
+# 运行日志
+*.log
+
+# Local artifacts, browser sessions, downloaded reference code and installers
+/.playwright-cli/
+/output/
+/reports/
+/vendor/
+/handoff/
+/reference-ui/
+/AGENTS.md
+*.zip
+*.exe
+*.db
+*.db-*
+*.sqlite*
+*.pid
+.env.*
+!.env.example
+.venv/
+node_modules/
+.DS_Store
+
+# Machine-only launch / publishing helpers; not needed for a clean checkout
+/scripts/start-public-tunnel.py
+/scripts/publish-local-case.py
+/scripts/create-handoff-archive.ps1
+/scripts/document-full-profit.py
+/scripts/verify-live-case.py
+/scripts/verify-full-profit.py

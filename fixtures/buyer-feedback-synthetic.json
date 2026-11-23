@@ -1,0 +1,12 @@
+{
+  "record_type":"feedback",
+  "id":"DEMO-FEEDBACK-001",
+  "candidate_id":"DEMO-ORG-001",
+  "platform_stage":"pricing",
+  "feedback_text":"合成演示：假设平台提出每套24元供货价，待公司评估。不是实际买手反馈。",
+  "feedback_date":"2026-11-23",
+  "evidence_ref":"synthetic:feedback-not-real-platform-task",
+  "verification":"draft",
+  "synthetic":true,
+  "buyer_supply_income":{"amount":"24.00","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:feedback-not-real-platform-task"}
+}

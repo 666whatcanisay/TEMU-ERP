@@ -1,0 +1,18 @@
+{
+  "record_type":"source",
+  "id":"IKEA-DE-70457487",
+  "level":"market_observation",
+  "url":"https://www.ikea.com/de/de/p/nojig-sortierbox-kunststoff-beige-70457487/",
+  "locator":"NOJIG 10x20x5 cm 产品、价格与页面评价区域",
+  "scope":{"country":"DE","product_dimensions_cm":[10,20,5],"display_unit":"single box"},
+  "observed_at":"2026-11-22",
+  "retrieved_at":"2026-11-22",
+  "effective_from":null,
+  "version":null,
+  "verification":"public_body_read_no_live_sales_verification",
+  "snapshot_ref":null,
+  "sha256":null,
+  "facts":{"display_price":"0.50","currency":"EUR","tax_included":true,"shipping_excluded":true,"display_rating":"4.8","display_review_count":3820,"sales":null},
+  "comparable_to_synthetic_candidate":false,
+  "note":"真实观察记录，未保存完整页面截图；评价可能跨规格汇总，不用于推算销量或认定同款最低价。"
+}

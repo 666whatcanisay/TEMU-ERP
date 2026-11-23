@@ -1,0 +1,13 @@
+{
+  "record_type":"policy",
+  "metric":null,
+  "threshold_percent":null,
+  "confirmed":false,
+  "confirmed_by":null,
+  "confirmed_at":null,
+  "source_ref":null,
+  "version":"unconfirmed-v1",
+  "synthetic":true,
+  "note":"40/50/60/70% 只作 UI 可选示例，用户尚未指定按收入贡献率或成本加价率计算。不得自动确认公司政策。",
+  "example_choices":["40","50","60","70"]
+}

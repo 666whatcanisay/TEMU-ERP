@@ -1,0 +1,1248 @@
+{
+  "format": "temu-workbench-demo/v1",
+  "description": "Offline interview cases. Public product references; assumed procurement, prices, policies and buyer feedback. No actual seller account data.",
+  "reference_date": "2026-11-23",
+  "records": [
+    {
+      "record_type": "source",
+      "id": "RELAXDAYS-DE-10048750",
+      "level": "market_observation",
+      "title": "Relaxdays 六件套抽屉分隔盒 · 德国市场观察",
+      "publisher": "Relaxdays GmbH",
+      "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/schubladen-organizer/6-teiliges-schubladen-ordnungssystem-10048750.html",
+      "locator": "商品 10048750；产品详情 H×B×T 5.5×12×7 cm、每件约60g、6件套；价格区13.99 EUR",
+      "scope": {
+        "country": "DE",
+        "pieces": 6,
+        "product_dimensions_cm": [
+          "12",
+          "7",
+          "5.5"
+        ],
+        "material": "plastic",
+        "display_unit": "6 piece set"
+      },
+      "observed_at": "2026-11-23",
+      "verification": "public_body_reviewed",
+      "facts": {
+        "display_price": "13.99",
+        "currency": "EUR",
+        "tax_included": true,
+        "shipping_condition": "DE free shipping per page",
+        "material": "plastic",
+        "color": "brown",
+        "item_weight_g": "60",
+        "retailer_item_id": "10048750",
+        "sales": null
+      },
+      "note": "公开商品用于规格与市场背景研究；没有销量证据，不代表本公司货源或可复制其品牌/素材。"
+    },
+    {
+      "record_type": "candidate",
+      "id": "DE-DRAWER-006",
+      "title": "蜂巢式抽屉分隔收纳盒 · 棕色 6 件套",
+      "listing_title": "6-Pack Honeycomb Drawer Organizer, Brown Plastic Interlocking Storage Boxes",
+      "market_title": "Schubladen-Organizer im 6er-Set, braune Kunststoffboxen",
+      "mode_assumption": "fully_managed",
+      "mode_confirmed": false,
+      "research_market": "DE",
+      "market_currency": "EUR",
+      "material": "plastic",
+      "platform_product_id": null,
+      "category_path_ids": [],
+      "template_binding": {
+        "status": "unverified",
+        "category_id": null,
+        "source_ref": null
+      },
+      "evidence_refs": [
+        "RELAXDAYS-DE-10048750"
+      ],
+      "internal_decision": "research",
+      "decision_history": [],
+      "synthetic": true,
+      "rationale": "德国零售商已有同规格六件套商品，可用于规格与价格背景对账；先评估供货成本与核价空间，销量与实际转化待店铺验证。",
+      "advantage": "拟评估棕色六件套、包装紧凑与交期；供货能力和材料报告待供应商确认。",
+      "supplier": {
+        "url": null,
+        "moq": 500,
+        "lead_days": 14,
+        "reference": "casebook:SUPPLIER-001"
+      },
+      "materials": {
+        "supplier": false,
+        "photos": false,
+        "measure": false,
+        "compliance": false,
+        "template": false,
+        "sample": false
+      },
+      "provenance": {
+        "public_product": {
+          "source_id": "RELAXDAYS-DE-10048750",
+          "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/schubladen-organizer/6-teiliges-schubladen-ordnungssystem-10048750.html",
+          "fields": [
+            "dimensions",
+            "pieces",
+            "material",
+            "item_weight"
+          ]
+        },
+        "costs": {
+          "origin": "scenario_assumption",
+          "reference": "casebook:COST-001",
+          "scope": "按每套人民币，采购8.40/包装1.20/国内物流1.80/售后准备0.60/其他0.50"
+        },
+        "packaging": {
+          "origin": "scenario_assumption",
+          "reference": "casebook:PACK-001"
+        },
+        "feedback": {
+          "origin": "scenario_assumption",
+          "reference": "casebook:PRICING-001..003"
+        },
+        "policy": {
+          "origin": "scenario_assumption",
+          "reference": "casebook:POLICY-001",
+          "scope": "收入贡献率40%，用于内部测算"
+        },
+        "profit": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "完整成本预算，旧售后汇总不重复加入"
+        }
+      },
+      "skus": [
+        {
+          "merchant_sku": "ORG-HONEY-BRN-06",
+          "merchant_group_code": "ORG-HONEY",
+          "platform_sku_id": null,
+          "platform_skc_id": null,
+          "sales_unit": "set",
+          "pieces": 6,
+          "sale_spec_bindings": [
+            {
+              "name": "颜色",
+              "value": "棕色",
+              "parent_spec_id": null,
+              "spec_id": null,
+              "source_ref": "RELAXDAYS-DE-10048750"
+            },
+            {
+              "name": "件数",
+              "value": "6",
+              "parent_spec_id": null,
+              "spec_id": null,
+              "source_ref": "RELAXDAYS-DE-10048750"
+            }
+          ],
+          "specs": {
+            "dimensions": {
+              "length_cm": null,
+              "width_cm": null,
+              "height_cm": null,
+              "unit": "cm"
+            },
+            "weight": {
+              "net_weight_g": "360",
+              "gross_weight_g": "420",
+              "unit": "g"
+            },
+            "item": {
+              "dimensions": {
+                "length_cm": "12",
+                "width_cm": "7",
+                "height_cm": "5.5",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "60",
+                "gross_weight_g": null,
+                "unit": "g"
+              }
+            },
+            "package": {
+              "dimensions": {
+                "length_cm": "25",
+                "width_cm": "16",
+                "height_cm": "8",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "360",
+                "gross_weight_g": "420",
+                "unit": "g"
+              }
+            }
+          },
+          "pack_composition": [
+            {
+              "name": "蜂巢式分隔盒",
+              "count": 6,
+              "product_dimensions_cm": [
+                "12",
+                "7",
+                "5.5"
+              ],
+              "classification": null
+            }
+          ],
+          "supply_income": {
+            "amount": "24.00",
+            "currency": "CNY",
+            "sales_unit": "set",
+            "confirmed": true,
+            "source_ref": "casebook:OFFER-001"
+          },
+          "costs": [
+            {
+              "key": "purchase",
+              "money": {
+                "amount": "8.40",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "casebook:COST-001/purchase"
+              }
+            },
+            {
+              "key": "packaging",
+              "money": {
+                "amount": "1.20",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "casebook:COST-001/packaging"
+              }
+            },
+            {
+              "key": "logistics",
+              "money": {
+                "amount": "1.80",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "casebook:COST-001/logistics"
+              }
+            },
+            {
+              "key": "expected_after_sales",
+              "money": {
+                "amount": "0.60",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "casebook:COST-001/expected_after_sales"
+              }
+            },
+            {
+              "key": "other_variable",
+              "money": {
+                "amount": "0.50",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "casebook:COST-001/other_variable"
+              }
+            }
+          ],
+          "material": "plastic",
+          "profit_plan": {
+            "version": "full-cost/2.0",
+            "currency": "CNY",
+            "inputs": {},
+            "value_basis": "budget_assumptions"
+          }
+        }
+      ]
+    },
+    {
+      "record_type": "policy",
+      "id": "POLICY-CURRENT",
+      "metric": "contribution_margin",
+      "threshold_percent": "40",
+      "confirmed": true,
+      "confirmed_by": "案例测算口径",
+      "confirmed_at": "2026-11-23",
+      "source_ref": "casebook:POLICY-001",
+      "version": "case-policy-40-v1",
+      "data_origin": "scenario_assumption"
+    },
+    {
+      "record_type": "source",
+      "id": "REF-10047015",
+      "level": "market_observation",
+      "publisher": "Relaxdays GmbH",
+      "title": "折叠布艺收纳箱 · 灰色4件套 · 德国公开参照",
+      "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/aufbewahrungsboxen/graue-aufbewahrungsbox-im-4er-set-10047015.html",
+      "locator": "零售商货号 10047015，商品详情尺寸/件数/材质；零售标价区域",
+      "scope": {
+        "country": "DE",
+        "pieces": 4,
+        "product_dimensions_cm": [
+          "30",
+          "30",
+          "30"
+        ],
+        "material": "nonwoven/cardboard/iron"
+      },
+      "observed_at": "2026-11-23",
+      "verification": "public_body_reviewed",
+      "facts": {
+        "display_price": "17.99",
+        "currency": "EUR",
+        "tax_included": true,
+        "retailer_item_id": "10047015",
+        "sales": null
+      },
+      "note": "公开商品仅作规格与市场参考；本公司采购成本、包装尺寸及核价由内部预算输入；无销量证明。"
+    },
+    {
+      "record_type": "candidate",
+      "id": "DE-CUBE-004",
+      "title": "折叠布艺收纳箱 · 灰色4件套",
+      "listing_title": "4-Pack Foldable Fabric Storage Cubes, Grey, 30 cm",
+      "market_title": null,
+      "mode_assumption": "fully_managed",
+      "mode_confirmed": false,
+      "research_market": "DE",
+      "market_currency": "EUR",
+      "material": "nonwoven/cardboard/iron",
+      "platform_product_id": null,
+      "category_path_ids": [],
+      "template_binding": {
+        "status": "unverified",
+        "category_id": null,
+        "source_ref": null
+      },
+      "evidence_refs": [
+        "REF-10047015"
+      ],
+      "internal_decision": "research",
+      "decision_history": [],
+      "synthetic": true,
+      "rationale": "德国零售商已有同规格六件套商品，可用于规格与价格背景对账；先评估供货成本与核价空间，销量与实际转化待店铺验证。",
+      "advantage": "拟评估棕色六件套、包装紧凑与交期；供货能力和材料报告待供应商确认。",
+      "supplier": {
+        "url": null,
+        "moq": null,
+        "lead_days": null
+      },
+      "materials": {
+        "supplier": false,
+        "photos": false,
+        "measure": false,
+        "compliance": false,
+        "template": false,
+        "sample": false
+      },
+      "provenance": {
+        "public_product": {
+          "source_id": "REF-10047015",
+          "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/aufbewahrungsboxen/graue-aufbewahrungsbox-im-4er-set-10047015.html",
+          "scope": "公开规格参照，不证明本公司货源或销量"
+        },
+        "costs": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "采购、包材与物流为预算，单位人民币；国内运费按首批线路预算/备货数量分摊，无平台补贴假定"
+        },
+        "packaging": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "运输包装尺寸/毛重为测算输入，待实物称量"
+        },
+        "profit": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "完整利润参数可在编辑SKU调整；不把零售欧元价当供货收入"
+        }
+      },
+      "skus": [
+        {
+          "merchant_sku": "ORG-CUBE-GRY-04",
+          "merchant_group_code": "ORG-CUBE-GRY",
+          "platform_sku_id": null,
+          "platform_skc_id": null,
+          "sales_unit": "set",
+          "pieces": 4,
+          "sale_spec_bindings": [
+            {
+              "name": "颜色",
+              "value": "灰色",
+              "parent_spec_id": null,
+              "spec_id": null,
+              "source_ref": "REF-10047015"
+            }
+          ],
+          "specs": {
+            "dimensions": {
+              "length_cm": null,
+              "width_cm": null,
+              "height_cm": null,
+              "unit": "cm"
+            },
+            "weight": {
+              "net_weight_g": "2000",
+              "gross_weight_g": "2200",
+              "unit": "g"
+            },
+            "item": {
+              "dimensions": {
+                "length_cm": "30",
+                "width_cm": "30",
+                "height_cm": "30",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "500",
+                "gross_weight_g": null,
+                "unit": "g"
+              }
+            },
+            "package": {
+              "dimensions": {
+                "length_cm": "32",
+                "width_cm": "32",
+                "height_cm": "12",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "2000",
+                "gross_weight_g": "2200",
+                "unit": "g"
+              }
+            }
+          },
+          "pack_composition": [
+            {
+              "name": "折叠布艺收纳箱",
+              "count": 4,
+              "product_dimensions_cm": [
+                "30",
+                "30",
+                "30"
+              ],
+              "classification": null
+            }
+          ],
+          "supply_income": {
+            "amount": "52.00",
+            "currency": "CNY",
+            "sales_unit": "set",
+            "confirmed": true,
+            "source_ref": "budget:DE-CUBE-004/offer"
+          },
+          "costs": [
+            {
+              "key": "purchase",
+              "money": {
+                "amount": "29.00",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-CUBE-004/purchase"
+              }
+            },
+            {
+              "key": "packaging",
+              "money": {
+                "amount": "2.40",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-CUBE-004/packaging"
+              }
+            },
+            {
+              "key": "logistics",
+              "money": {
+                "amount": "4.20",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-CUBE-004/logistics"
+              }
+            },
+            {
+              "key": "expected_after_sales",
+              "money": {
+                "amount": "1.00",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-CUBE-004/expected_after_sales"
+              }
+            },
+            {
+              "key": "other_variable",
+              "money": {
+                "amount": "0.90",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-CUBE-004/other_variable"
+              }
+            }
+          ],
+          "material": "nonwoven/cardboard/iron",
+          "profit_plan": {
+            "version": "full-cost/2.0",
+            "currency": "CNY",
+            "inputs": {
+              "sku_weight": "1.6"
+            },
+            "value_basis": "budget_assumptions"
+          }
+        }
+      ]
+    },
+    {
+      "record_type": "source",
+      "id": "REF-10048051",
+      "level": "market_observation",
+      "publisher": "Relaxdays GmbH",
+      "title": "内衣袜子分格收纳盒 · 4件套 · 德国公开参照",
+      "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/schubladen-organizer/unterwasche-organizer-4er-set-10048051.html",
+      "locator": "零售商货号 10048051，商品详情尺寸/件数/材质；零售标价区域",
+      "scope": {
+        "country": "DE",
+        "pieces": 4,
+        "product_dimensions_cm": [
+          "29",
+          "29",
+          "9"
+        ],
+        "material": "polyester/plastic/cardboard"
+      },
+      "observed_at": "2026-11-23",
+      "verification": "public_body_reviewed",
+      "facts": {
+        "display_price": "20.99",
+        "currency": "EUR",
+        "tax_included": true,
+        "retailer_item_id": "10048051",
+        "sales": null
+      },
+      "note": "公开商品仅作规格与市场参考；本公司采购成本、包装尺寸及核价由内部预算输入；无销量证明。"
+    },
+    {
+      "record_type": "candidate",
+      "id": "DE-LINEN-004",
+      "title": "内衣袜子分格收纳盒 · 4件套",
+      "listing_title": "4-Pack Fabric Drawer Organizers, Grey, 16 Compartments Each",
+      "market_title": null,
+      "mode_assumption": "fully_managed",
+      "mode_confirmed": false,
+      "research_market": "DE",
+      "market_currency": "EUR",
+      "material": "polyester/plastic/cardboard",
+      "platform_product_id": null,
+      "category_path_ids": [],
+      "template_binding": {
+        "status": "unverified",
+        "category_id": null,
+        "source_ref": null
+      },
+      "evidence_refs": [
+        "REF-10048051"
+      ],
+      "internal_decision": "research",
+      "decision_history": [],
+      "synthetic": true,
+      "rationale": "德国零售商已有同规格六件套商品，可用于规格与价格背景对账；先评估供货成本与核价空间，销量与实际转化待店铺验证。",
+      "advantage": "拟评估棕色六件套、包装紧凑与交期；供货能力和材料报告待供应商确认。",
+      "supplier": {
+        "url": null,
+        "moq": null,
+        "lead_days": null
+      },
+      "materials": {
+        "supplier": false,
+        "photos": false,
+        "measure": false,
+        "compliance": false,
+        "template": false,
+        "sample": false
+      },
+      "provenance": {
+        "public_product": {
+          "source_id": "REF-10048051",
+          "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/schubladen-organizer/unterwasche-organizer-4er-set-10048051.html",
+          "scope": "公开规格参照，不证明本公司货源或销量"
+        },
+        "costs": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "采购、包材与物流为预算，单位人民币；国内运费按首批线路预算/备货数量分摊，无平台补贴假定"
+        },
+        "packaging": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "运输包装尺寸/毛重为测算输入，待实物称量"
+        },
+        "profit": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "完整利润参数可在编辑SKU调整；不把零售欧元价当供货收入"
+        }
+      },
+      "skus": [
+        {
+          "merchant_sku": "ORG-LINEN-GRY-04",
+          "merchant_group_code": "ORG-LINEN-GRY",
+          "platform_sku_id": null,
+          "platform_skc_id": null,
+          "sales_unit": "set",
+          "pieces": 4,
+          "sale_spec_bindings": [
+            {
+              "name": "颜色",
+              "value": "灰色",
+              "parent_spec_id": null,
+              "spec_id": null,
+              "source_ref": "REF-10048051"
+            }
+          ],
+          "specs": {
+            "dimensions": {
+              "length_cm": null,
+              "width_cm": null,
+              "height_cm": null,
+              "unit": "cm"
+            },
+            "weight": {
+              "net_weight_g": "800",
+              "gross_weight_g": "950",
+              "unit": "g"
+            },
+            "item": {
+              "dimensions": {
+                "length_cm": "29",
+                "width_cm": "29",
+                "height_cm": "9",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "200",
+                "gross_weight_g": null,
+                "unit": "g"
+              }
+            },
+            "package": {
+              "dimensions": {
+                "length_cm": "31",
+                "width_cm": "31",
+                "height_cm": "10",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "800",
+                "gross_weight_g": "950",
+                "unit": "g"
+              }
+            }
+          },
+          "pack_composition": [
+            {
+              "name": "内衣袜子分格收纳盒",
+              "count": 4,
+              "product_dimensions_cm": [
+                "29",
+                "29",
+                "9"
+              ],
+              "classification": null
+            }
+          ],
+          "supply_income": {
+            "amount": "42.00",
+            "currency": "CNY",
+            "sales_unit": "set",
+            "confirmed": true,
+            "source_ref": "budget:DE-LINEN-004/offer"
+          },
+          "costs": [
+            {
+              "key": "purchase",
+              "money": {
+                "amount": "19.00",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-LINEN-004/purchase"
+              }
+            },
+            {
+              "key": "packaging",
+              "money": {
+                "amount": "1.40",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-LINEN-004/packaging"
+              }
+            },
+            {
+              "key": "logistics",
+              "money": {
+                "amount": "2.50",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-LINEN-004/logistics"
+              }
+            },
+            {
+              "key": "expected_after_sales",
+              "money": {
+                "amount": "0.80",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-LINEN-004/expected_after_sales"
+              }
+            },
+            {
+              "key": "other_variable",
+              "money": {
+                "amount": "0.70",
+                "currency": "CNY",
+                "sales_unit": "set",
+                "confirmed": true,
+                "source_ref": "budget:DE-LINEN-004/other_variable"
+              }
+            }
+          ],
+          "material": "polyester/plastic/cardboard",
+          "profit_plan": {
+            "version": "full-cost/2.0",
+            "currency": "CNY",
+            "inputs": {
+              "sku_weight": "1.0"
+            },
+            "value_basis": "budget_assumptions"
+          }
+        }
+      ]
+    },
+    {
+      "record_type": "source",
+      "id": "REF-10039317",
+      "level": "market_observation",
+      "publisher": "Relaxdays GmbH",
+      "title": "竹制桌面抽屉整理盒 · 四格 · 德国公开参照",
+      "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/schubladen-organizer/schubladenorganizer-mit-4-fachern-10039317.html",
+      "locator": "零售商货号 10039317，商品详情尺寸/件数/材质；零售标价区域",
+      "scope": {
+        "country": "DE",
+        "pieces": 1,
+        "product_dimensions_cm": [
+          "28",
+          "16",
+          "4"
+        ],
+        "material": "bamboo/fibreboard"
+      },
+      "observed_at": "2026-11-23",
+      "verification": "public_body_reviewed",
+      "facts": {
+        "display_price": "12.99",
+        "currency": "EUR",
+        "tax_included": true,
+        "retailer_item_id": "10039317",
+        "sales": null
+      },
+      "note": "公开商品仅作规格与市场参考；本公司采购成本、包装尺寸及核价由内部预算输入；无销量证明。"
+    },
+    {
+      "record_type": "candidate",
+      "id": "DE-BAMBOO-001",
+      "title": "竹制桌面抽屉整理盒 · 四格",
+      "listing_title": "Bamboo Drawer Organizer, Four Compartments, Natural",
+      "market_title": null,
+      "mode_assumption": "fully_managed",
+      "mode_confirmed": false,
+      "research_market": "DE",
+      "market_currency": "EUR",
+      "material": "bamboo/fibreboard",
+      "platform_product_id": null,
+      "category_path_ids": [],
+      "template_binding": {
+        "status": "unverified",
+        "category_id": null,
+        "source_ref": null
+      },
+      "evidence_refs": [
+        "REF-10039317"
+      ],
+      "internal_decision": "research",
+      "decision_history": [],
+      "synthetic": true,
+      "rationale": "德国零售商已有同规格六件套商品，可用于规格与价格背景对账；先评估供货成本与核价空间，销量与实际转化待店铺验证。",
+      "advantage": "拟评估棕色六件套、包装紧凑与交期；供货能力和材料报告待供应商确认。",
+      "supplier": {
+        "url": null,
+        "moq": null,
+        "lead_days": null
+      },
+      "materials": {
+        "supplier": false,
+        "photos": false,
+        "measure": false,
+        "compliance": false,
+        "template": false,
+        "sample": false
+      },
+      "provenance": {
+        "public_product": {
+          "source_id": "REF-10039317",
+          "url": "https://relaxdays.de/produkte/haushaltsprodukte/verstauen-sortieren/schubladen-organizer/schubladenorganizer-mit-4-fachern-10039317.html",
+          "scope": "公开规格参照，不证明本公司货源或销量"
+        },
+        "costs": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "采购、包材与物流为预算，单位人民币；国内运费按首批线路预算/备货数量分摊，无平台补贴假定"
+        },
+        "packaging": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "运输包装尺寸/毛重为测算输入，待实物称量"
+        },
+        "profit": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "完整利润参数可在编辑SKU调整；不把零售欧元价当供货收入"
+        }
+      },
+      "skus": [
+        {
+          "merchant_sku": "ORG-BAMBOO-NAT-01",
+          "merchant_group_code": "ORG-BAMBOO-NAT",
+          "platform_sku_id": null,
+          "platform_skc_id": null,
+          "sales_unit": "piece",
+          "pieces": 1,
+          "sale_spec_bindings": [
+            {
+              "name": "颜色",
+              "value": "原木色",
+              "parent_spec_id": null,
+              "spec_id": null,
+              "source_ref": "REF-10039317"
+            }
+          ],
+          "specs": {
+            "dimensions": {
+              "length_cm": "28",
+              "width_cm": "16",
+              "height_cm": "4",
+              "unit": "cm"
+            },
+            "weight": {
+              "net_weight_g": "350",
+              "gross_weight_g": "450",
+              "unit": "g"
+            },
+            "item": {
+              "dimensions": {
+                "length_cm": "28",
+                "width_cm": "16",
+                "height_cm": "4",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "350",
+                "gross_weight_g": null,
+                "unit": "g"
+              }
+            },
+            "package": {
+              "dimensions": {
+                "length_cm": "30",
+                "width_cm": "18",
+                "height_cm": "6",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": "350",
+                "gross_weight_g": "450",
+                "unit": "g"
+              }
+            }
+          },
+          "pack_composition": [
+            {
+              "name": "竹制桌面抽屉整理盒",
+              "count": 1,
+              "product_dimensions_cm": [
+                "28",
+                "16",
+                "4"
+              ],
+              "classification": null
+            }
+          ],
+          "supply_income": {
+            "amount": "22.00",
+            "currency": "CNY",
+            "sales_unit": "piece",
+            "confirmed": true,
+            "source_ref": "budget:DE-BAMBOO-001/offer"
+          },
+          "costs": [
+            {
+              "key": "purchase",
+              "money": {
+                "amount": "11.00",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-BAMBOO-001/purchase"
+              }
+            },
+            {
+              "key": "packaging",
+              "money": {
+                "amount": "1.30",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-BAMBOO-001/packaging"
+              }
+            },
+            {
+              "key": "logistics",
+              "money": {
+                "amount": "2.00",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-BAMBOO-001/logistics"
+              }
+            },
+            {
+              "key": "expected_after_sales",
+              "money": {
+                "amount": "0.70",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-BAMBOO-001/expected_after_sales"
+              }
+            },
+            {
+              "key": "other_variable",
+              "money": {
+                "amount": "0.60",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-BAMBOO-001/other_variable"
+              }
+            }
+          ],
+          "material": "bamboo/fibreboard",
+          "profit_plan": {
+            "version": "full-cost/2.0",
+            "currency": "CNY",
+            "inputs": {
+              "sku_weight": "1.1"
+            },
+            "value_basis": "budget_assumptions"
+          }
+        }
+      ]
+    },
+    {
+      "record_type": "source",
+      "id": "REF-70457487",
+      "level": "market_observation",
+      "publisher": "IKEA",
+      "title": "小号PP抽屉收纳盒 · 单件 · 德国公开参照",
+      "url": "https://www.ikea.com/de/de/p/nojig-sortierbox-kunststoff-beige-70457487/",
+      "locator": "零售商货号 70457487，商品详情尺寸/件数/材质；零售标价区域",
+      "scope": {
+        "country": "DE",
+        "pieces": 1,
+        "product_dimensions_cm": [
+          "10",
+          "20",
+          "5"
+        ],
+        "material": "polypropylene"
+      },
+      "observed_at": "2026-11-23",
+      "verification": "public_body_reviewed",
+      "facts": {
+        "display_price": "0.50",
+        "currency": "EUR",
+        "tax_included": true,
+        "retailer_item_id": "70457487",
+        "sales": null
+      },
+      "note": "公开商品仅作规格与市场参考；本公司采购成本、包装尺寸及核价由内部预算输入；无销量证明。"
+    },
+    {
+      "record_type": "candidate",
+      "id": "DE-TRAY-001",
+      "title": "小号PP抽屉收纳盒 · 单件",
+      "listing_title": "Small Plastic Drawer Storage Tray, Beige, 10 x 20 x 5 cm",
+      "market_title": null,
+      "mode_assumption": "fully_managed",
+      "mode_confirmed": false,
+      "research_market": "DE",
+      "market_currency": "EUR",
+      "material": "polypropylene",
+      "platform_product_id": null,
+      "category_path_ids": [],
+      "template_binding": {
+        "status": "unverified",
+        "category_id": null,
+        "source_ref": null
+      },
+      "evidence_refs": [
+        "REF-70457487"
+      ],
+      "internal_decision": "research",
+      "decision_history": [],
+      "synthetic": true,
+      "rationale": "德国零售商已有同规格六件套商品，可用于规格与价格背景对账；先评估供货成本与核价空间，销量与实际转化待店铺验证。",
+      "advantage": "拟评估棕色六件套、包装紧凑与交期；供货能力和材料报告待供应商确认。",
+      "supplier": {
+        "url": null,
+        "moq": null,
+        "lead_days": null
+      },
+      "materials": {
+        "supplier": false,
+        "photos": false,
+        "measure": false,
+        "compliance": false,
+        "template": false,
+        "sample": false
+      },
+      "provenance": {
+        "public_product": {
+          "source_id": "REF-70457487",
+          "url": "https://www.ikea.com/de/de/p/nojig-sortierbox-kunststoff-beige-70457487/",
+          "scope": "公开规格参照，不证明本公司货源或销量"
+        },
+        "costs": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "采购、包材与物流为预算，单位人民币；国内运费按首批线路预算/备货数量分摊，无平台补贴假定"
+        },
+        "packaging": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "运输包装尺寸/毛重为测算输入，待实物称量"
+        },
+        "profit": {
+          "origin": "scenario_assumption",
+          "reference": "PROFIT-ASSUMPTIONS",
+          "scope": "完整利润参数可在编辑SKU调整；不把零售欧元价当供货收入"
+        }
+      },
+      "skus": [
+        {
+          "merchant_sku": "ORG-TRAY-BGE-01",
+          "merchant_group_code": "ORG-TRAY-BGE",
+          "platform_sku_id": null,
+          "platform_skc_id": null,
+          "sales_unit": "piece",
+          "pieces": 1,
+          "sale_spec_bindings": [
+            {
+              "name": "颜色",
+              "value": "米色",
+              "parent_spec_id": null,
+              "spec_id": null,
+              "source_ref": "REF-70457487"
+            }
+          ],
+          "specs": {
+            "dimensions": {
+              "length_cm": "10",
+              "width_cm": "20",
+              "height_cm": "5",
+              "unit": "cm"
+            },
+            "weight": {
+              "net_weight_g": null,
+              "gross_weight_g": "50",
+              "unit": "g"
+            },
+            "item": {
+              "dimensions": {
+                "length_cm": "10",
+                "width_cm": "20",
+                "height_cm": "5",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": null,
+                "gross_weight_g": null,
+                "unit": "g"
+              }
+            },
+            "package": {
+              "dimensions": {
+                "length_cm": "21",
+                "width_cm": "11",
+                "height_cm": "6",
+                "unit": "cm"
+              },
+              "weight": {
+                "net_weight_g": null,
+                "gross_weight_g": "50",
+                "unit": "g"
+              }
+            }
+          },
+          "pack_composition": [
+            {
+              "name": "小号PP抽屉收纳盒",
+              "count": 1,
+              "product_dimensions_cm": [
+                "10",
+                "20",
+                "5"
+              ],
+              "classification": null
+            }
+          ],
+          "supply_income": {
+            "amount": "2.80",
+            "currency": "CNY",
+            "sales_unit": "piece",
+            "confirmed": true,
+            "source_ref": "budget:DE-TRAY-001/offer"
+          },
+          "costs": [
+            {
+              "key": "purchase",
+              "money": {
+                "amount": "0.80",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-TRAY-001/purchase"
+              }
+            },
+            {
+              "key": "packaging",
+              "money": {
+                "amount": "0.25",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-TRAY-001/packaging"
+              }
+            },
+            {
+              "key": "logistics",
+              "money": {
+                "amount": "0.45",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-TRAY-001/logistics"
+              }
+            },
+            {
+              "key": "expected_after_sales",
+              "money": {
+                "amount": "0.10",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-TRAY-001/expected_after_sales"
+              }
+            },
+            {
+              "key": "other_variable",
+              "money": {
+                "amount": "0.10",
+                "currency": "CNY",
+                "sales_unit": "piece",
+                "confirmed": true,
+                "source_ref": "budget:DE-TRAY-001/other_variable"
+              }
+            }
+          ],
+          "material": "polypropylene",
+          "profit_plan": {
+            "version": "full-cost/2.0",
+            "currency": "CNY",
+            "inputs": {
+              "sku_weight": "0.3"
+            },
+            "value_basis": "budget_assumptions"
+          }
+        }
+      ]
+    },
+    {
+      "record_type": "feedback",
+      "id": "FB-CASE-001",
+      "candidate_id": "DE-DRAWER-006",
+      "sku_ref": "ORG-HONEY-BRN-06",
+      "platform_stage": "pricing",
+      "feedback_date": "2026-11-23",
+      "created_at": "2026-11-23T10:01:00+08:00",
+      "feedback_text": "按每套 20.00 元重新评估供货条件，核对可变成本与可接受底价。",
+      "verification": "human_confirmed",
+      "evidence_ref": "casebook:PRICING-001",
+      "data_origin": "scenario_assumption",
+      "buyer_supply_income": {
+        "amount": "20.00",
+        "currency": "CNY",
+        "sales_unit": "set",
+        "confirmed": true,
+        "source_ref": "casebook:PRICING-001"
+      }
+    },
+    {
+      "record_type": "feedback",
+      "id": "FB-CASE-002",
+      "candidate_id": "DE-DRAWER-006",
+      "sku_ref": "ORG-HONEY-BRN-06",
+      "platform_stage": "pricing",
+      "feedback_date": "2026-11-23",
+      "created_at": "2026-11-23T10:02:00+08:00",
+      "feedback_text": "按每套 12.00 元重新评估供货条件，核对可变成本与可接受底价。",
+      "verification": "human_confirmed",
+      "evidence_ref": "casebook:PRICING-002",
+      "data_origin": "scenario_assumption",
+      "buyer_supply_income": {
+        "amount": "12.00",
+        "currency": "CNY",
+        "sales_unit": "set",
+        "confirmed": true,
+        "source_ref": "casebook:PRICING-002"
+      }
+    },
+    {
+      "record_type": "feedback",
+      "id": "FB-CASE-003",
+      "candidate_id": "DE-DRAWER-006",
+      "sku_ref": "ORG-HONEY-BRN-06",
+      "platform_stage": "pricing",
+      "feedback_date": "2026-11-23",
+      "created_at": "2026-11-23T10:03:00+08:00",
+      "feedback_text": "按每套 21.00 元重新评估供货条件，核对可变成本与可接受底价。",
+      "verification": "human_confirmed",
+      "evidence_ref": "casebook:PRICING-003",
+      "data_origin": "scenario_assumption",
+      "buyer_supply_income": {
+        "amount": "21.00",
+        "currency": "CNY",
+        "sales_unit": "set",
+        "confirmed": true,
+        "source_ref": "casebook:PRICING-003"
+      }
+    }
+  ]
+}

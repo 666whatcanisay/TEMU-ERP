@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Temu 全托管选品与买手提报工作台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c24e0c'/%3E%3Ctext x='16' y='23' text-anchor='middle' fill='white' font-family='sans-serif' font-size='23'%3ET%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div id="app" aria-label="Temu 全托管选品与买手提报工作台">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">T</span>
+        <div class="brand-text">选品提报台<small>全托管场景 · 本地内部记录</small></div>
+      </div>
+      <nav class="main-nav" aria-label="主工作区">
+        <button class="nav-btn" data-view="research" data-testid="nav-research" aria-current="page">候选研究</button>
+        <button class="nav-btn" data-view="submission" data-testid="nav-submission">商品提报</button>
+        <button class="nav-btn" data-view="feedback" data-testid="nav-feedback">反馈跟进</button>
+      </nav>
+      <div class="topbar-actions">
+        <button class="link-btn" data-panel="sources" data-testid="open-sources">来源依据</button>
+        <button class="link-btn" data-panel="settings" data-testid="open-settings">设置与集成</button>
+      </div>
+    </header>
+
+    <main id="view-root" tabindex="-1"></main>
+
+    <aside id="side-drawer" class="drawer" hidden aria-label="次级信息面板"></aside>
+    <div id="drawer-backdrop" class="backdrop" hidden></div>
+
+    <!-- 共享问号气泡：hover / 键盘 focus / 点击均可打开，可关闭，不遮挡输入 -->
+    <div id="help-popover" class="popover" role="dialog" aria-modal="false" hidden></div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+  <script src="/static/profit-view.js"></script>
+  <script src="/static/profit-popover.js"></script>
+  <script src="/static/workflow.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

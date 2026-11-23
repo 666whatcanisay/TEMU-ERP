@@ -1,0 +1,26 @@
+{
+  "schema_version":"1.0",
+  "status":"reference_only_not_live_verified",
+  "mode":"fully_managed",
+  "sdk_commit":"1217476f829528bb43f156b28e9a0d175823a368",
+  "rules":["以下为已读取第三方 SDK 的结构候选，不是已确认的公司类目模板。","真实类目属性 ID 与枚举必须由当前后台/授权 API 返回，禁止复制 SDK 示例数值。","所有 opaque 或长整型 ID 在应用和 CSV/JSON 内保留原始字符串。","只有验证通过的边界适配器才把 canonical 值转换成平台要求的类型、单位或嵌套层级。"],
+  "mappings":[
+    {"canonical":"product.title","candidate_path":"productName","source_id":"SDK-GO-CREATE","locator":"GoodsCreateRequest.ProductName","live_required":null,"note":"字符限制待当前模板核对"},
+    {"canonical":"product.category_path_ids","candidate_path":"cat1Id ... cat10Id","source_id":"SDK-GO-CREATE","locator":"GoodsCreateRequest","live_required":null,"note":"保存真实路径层级；不制造层级或 ID"},
+    {"canonical":"product.attributes[]","candidate_path":"productPropertyReqs[]","source_id":"SDK-GO-CREATE","locator":"GoodsCreateProductProperty","live_required":null,"note":"候选含 templatePid/pid/refPid/vid/propName/propValue/valueUnit；不要只按属性中文名填写"},
+    {"canonical":"category.template","candidate_path":"bg.goods.attrs.get; catId; properties[]","source_id":"SDK-GO-ATTRS","locator":"Query and GoodsCategoryAttributeProperty","live_required":null,"note":"文档入口与返回结构待真实授权核验；required/controlType/valuePrecision/values 等应来自实际结果"},
+    {"canonical":"variant_groups[]","candidate_path":"productSkcReqs[]","source_id":"SDK-GO-CREATE","locator":"GoodsCreateProductSkc","live_required":null,"note":"不把所有品类都硬编码成颜色 SKC"},
+    {"canonical":"variant_group.merchant_code","candidate_path":"productSkcReqs[].extCode","source_id":"SDK-GO-CREATE","locator":"GoodsCreateProductSkc.ExtCode","live_required":null,"note":"商家外部货号，不是平台 SKC ID"},
+    {"canonical":"sku.merchant_code","candidate_path":"productSkcReqs[].productSkuReqs[].extCode","source_id":"SDK-GO-CREATE","locator":"GoodsCreateProductSku.ExtCode","live_required":null,"note":"该 SDK 注释在 SKU 结构中仍写 SKC，存在语义不一致，必须对真实接口核验，不能只信注释"},
+    {"canonical":"sku.sale_specs[]","candidate_path":"productSkuSpecReqs[]; mainProductSkuSpecReqs[]","source_id":"SDK-GO-CREATE","locator":"SKU/SKC structures; entity.Specification","live_required":null,"note":"候选键 parentSpecId/specId；真实枚举来自类目规格，不生成任意值"},
+    {"canonical":"sku.supply_price","candidate_path":"productSkuReqs[].supplierPrice + currencyType","source_id":"SDK-GO-CREATE","locator":"GoodsCreateProductSku.SupplierPrice","live_required":null,"note":"SDK 标为全托管供货价，以最小货币单位传入；适配器按已核实币种换算，不能把界面元直接当分"},
+    {"canonical":"sku.platform_id","candidate_path":"productSkuId in result/query","source_id":"SDK-GO-CREATE","locator":"GoodsCreateResult around goods.go:838 and entity/goods.go","live_required":false,"note":"由平台返回，未提交为 null；不从商家货号推导"},
+    {"canonical":"variant_group.platform_id","candidate_path":"productSkcId in result/query","source_id":"SDK-GO-CREATE","locator":"GoodsCreateResult; entity/goods.go","live_required":false,"note":"平台生成，不能自行顺序编号"},
+    {"canonical":"product.platform_id","candidate_path":"productId in result/query","source_id":"SDK-GO-CREATE","locator":"GoodsCreateResult","live_required":false,"note":"平台生成；不要与零售站商品 ID 自动混同"},
+    {"canonical":"sku.package_dimensions_and_weight","candidate_path":"productSkuWhExtAttrReq and related volume/weight structures","source_id":"SDK-GO-CREATE","locator":"GoodsCreateProductSkuWhExtAttr","live_required":null,"note":"对象与单位须逐字段核实，UI 明确本体/整套/包装"},
+    {"canonical":"sku.pack_composition","candidate_path":"SKU classification/multi-pack fields; live path unverified","source_id":"MIAO-FULL","locator":"规格信息与套装说明","live_required":null,"note":"保留组成明细；不要直接把 UI 单品/同款多件/混合套装翻译为未经核实的枚举数字"},
+    {"canonical":"research.external_product_links","candidate_path":"站外产品链接（后台字段名/API path 待核验）","source_id":"DXM-FULL","locator":"产品信息：站外产品链接","live_required":null,"note":"不要把货源链接和站外需求证据混为一条字段"},
+    {"canonical":"materials.product_and_package_images","candidate_path":"carouselImageUrls; productOuterPackageImageReqs; previewImgUrls","source_id":"SDK-GO-CREATE","locator":"商品/SKC/包装图结构","live_required":null,"note":"图片数量、尺寸、比例、语言规则须匹配实际类目/接口版本"},
+    {"canonical":"excluded_for_fully_managed","candidate_path":"productWarehouseRouteReq; productShipmentReq; productSemiManagedReq","source_id":"SDK-GO-CREATE","locator":"GoodsCreateRequest mode-specific comments","live_required":false,"note":"SDK 中含半托管字段，不得因为同一个结构体里出现就要求全托管填写"}
+  ]
+}

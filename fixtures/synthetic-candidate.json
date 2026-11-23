@@ -1,0 +1,36 @@
+{
+  "record_type":"candidate",
+  "id":"DEMO-ORG-001",
+  "synthetic":true,
+  "mode_assumption":"fully_managed",
+  "mode_confirmed":false,
+  "research_market":"DE",
+  "platform_product_id":null,
+  "category_path_ids":[],
+  "template_binding":{"status":"unverified","category_id":null,"source_ref":null},
+  "evidence_refs":["IKEA-DE-70457487"],
+  "internal_decision":"research",
+  "decision_history":[],
+  "skus":[{
+    "merchant_sku":"ORG-CLR-006",
+    "merchant_group_code":"ORG-CLR",
+    "platform_sku_id":null,
+    "platform_skc_id":null,
+    "sales_unit":"set",
+    "pieces":6,
+    "sale_spec_bindings":[{"name":"颜色","value":"透明","parent_spec_id":null,"spec_id":null,"source_ref":null},{"name":"件数","value":"6","parent_spec_id":null,"spec_id":null,"source_ref":null}],
+    "specs":{
+      "dimensions":{"length_cm":"28.0","width_cm":"9.0","height_cm":"5.0","unit":"cm"},
+      "weight":{"net_weight_g":"120","gross_weight_g":"135","unit":"g"}
+    },
+    "pack_composition":[{"name":"相同尺寸收纳盒","count":6,"product_dimensions_cm":["28","9","5"],"classification":null}],
+    "supply_income":{"amount":"28.00","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:quote"},
+    "costs":[
+      {"key":"purchase","money":{"amount":"18.00","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:cost"}},
+      {"key":"packaging","money":{"amount":"1.00","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:cost"}},
+      {"key":"logistics","money":{"amount":"2.00","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:cost"}},
+      {"key":"expected_after_sales","money":{"amount":"1.00","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:cost"}},
+      {"key":"other_variable","money":{"amount":"1.50","currency":"CNY","sales_unit":"set","confirmed":false,"source_ref":"synthetic:cost"}}
+    ]
+  }]
+}

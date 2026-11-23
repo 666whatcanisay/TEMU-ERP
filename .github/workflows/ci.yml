@@ -1,0 +1,24 @@
+name: Verify workbench
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Application tests
+        run: python -X utf8 -m unittest discover -s app/tests -v
+      - name: Starter domain tests
+        working-directory: starter
+        run: python -X utf8 -m unittest discover -s tests -v
+      - name: Sources and contracts
+        run: python -X utf8 scripts/validate_bundle.py

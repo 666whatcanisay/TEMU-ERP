@@ -1,0 +1,1333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:temu-workbench:domain:1.0",
+  "title": "Workbench records (internal contracts, not Temu API schema)",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/source"
+    },
+    {
+      "$ref": "#/$defs/field"
+    },
+    {
+      "$ref": "#/$defs/candidate"
+    },
+    {
+      "$ref": "#/$defs/policy"
+    },
+    {
+      "$ref": "#/$defs/feedback"
+    }
+  ],
+  "$defs": {
+    "opaqueId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Preserve original strings. Never coerce via JS Number or fabricate IDs."
+    },
+    "amount": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9]+(?:\\.[0-9]{1,2})?$"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "record_type",
+        "id",
+        "level",
+        "url",
+        "verification",
+        "locator"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "source"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "level": {
+          "enum": [
+            "official_template",
+            "official_policy",
+            "official_law",
+            "official_guidance",
+            "official_locator_unread",
+            "third_party_sdk",
+            "vendor_integration_doc",
+            "industry_reference",
+            "market_observation",
+            "company_policy",
+            "internal_method",
+            "synthetic"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locator": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "object"
+        },
+        "observed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retrieved_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verification": {
+          "type": "string"
+        },
+        "snapshot_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": [
+        "record_type",
+        "key",
+        "value",
+        "confirmation",
+        "source_id",
+        "locator"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "field"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {},
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sales_unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "extraction_method": {
+          "enum": [
+            "manual",
+            "rule",
+            "http",
+            "browser",
+            "dsh",
+            "deepseek_api",
+            "file_import"
+          ]
+        },
+        "confirmation": {
+          "enum": [
+            "missing",
+            "extracted_candidate",
+            "estimated",
+            "human_confirmed",
+            "needs_recheck"
+          ]
+        },
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "money": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency",
+        "sales_unit",
+        "confirmed",
+        "source_ref"
+      ],
+      "properties": {
+        "amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sales_unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "source_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "measureText": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9]+(?:\\.[0-9]{1,2})?$"
+    },
+    "specs": {
+      "type": "object",
+      "properties": {
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "length_cm": {
+              "$ref": "#/$defs/measureText"
+            },
+            "width_cm": {
+              "$ref": "#/$defs/measureText"
+            },
+            "height_cm": {
+              "$ref": "#/$defs/measureText"
+            },
+            "unit": {
+              "enum": [
+                "cm",
+                null
+              ]
+            }
+          }
+        },
+        "weight": {
+          "type": "object",
+          "properties": {
+            "net_weight_g": {
+              "$ref": "#/$defs/measureText"
+            },
+            "gross_weight_g": {
+              "$ref": "#/$defs/measureText"
+            },
+            "unit": {
+              "enum": [
+                "g",
+                null
+              ]
+            }
+          }
+        },
+        "item": {
+          "$ref": "#/$defs/specs"
+        },
+        "package": {
+          "$ref": "#/$defs/specs"
+        }
+      }
+    },
+    "compositionItem": {
+      "type": "object",
+      "required": [
+        "name",
+        "count"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "product_dimensions_cm": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measureText"
+          }
+        },
+        "classification": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "sku": {
+      "type": "object",
+      "required": [
+        "merchant_sku",
+        "platform_sku_id",
+        "sales_unit",
+        "pieces",
+        "supply_income",
+        "costs"
+      ],
+      "properties": {
+        "merchant_sku": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform_sku_id": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "platform_skc_id": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "merchant_group_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sales_unit": {
+          "type": "string"
+        },
+        "pieces": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sale_spec_bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parent_spec_id": {
+                "$ref": "#/$defs/opaqueId"
+              },
+              "spec_id": {
+                "$ref": "#/$defs/opaqueId"
+              },
+              "source_ref": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "specs": {
+          "$ref": "#/$defs/specs"
+        },
+        "pack_composition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/compositionItem"
+          }
+        },
+        "supply_income": {
+          "$ref": "#/$defs/money"
+        },
+        "costs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "money"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "money": {
+                "$ref": "#/$defs/money"
+              }
+            }
+          }
+        },
+        "profit_plan": {
+          "$ref": "#/$defs/profitPlan"
+        }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "required": [
+        "record_type",
+        "id",
+        "mode_assumption",
+        "platform_product_id",
+        "research_market",
+        "skus",
+        "evidence_refs",
+        "internal_decision"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "candidate"
+        },
+        "id": {
+          "type": "string"
+        },
+        "mode_assumption": {
+          "const": "fully_managed"
+        },
+        "mode_confirmed": {
+          "type": "boolean"
+        },
+        "research_market": {
+          "type": "string"
+        },
+        "platform_product_id": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "category_path_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/opaqueId"
+          }
+        },
+        "template_binding": {
+          "type": "object"
+        },
+        "skus": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sku"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "internal_decision": {
+          "enum": [
+            "research",
+            "request_sample",
+            "internal_review",
+            "paused",
+            "excluded"
+          ]
+        },
+        "decision_history": {
+          "type": "array"
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "record_type",
+        "metric",
+        "threshold_percent",
+        "confirmed",
+        "source_ref",
+        "version"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "policy"
+        },
+        "metric": {
+          "enum": [
+            "contribution_margin",
+            "cost_markup",
+            null
+          ]
+        },
+        "threshold_percent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "confirmed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "required": [
+        "record_type",
+        "id",
+        "candidate_id",
+        "platform_stage",
+        "feedback_text",
+        "feedback_date",
+        "evidence_ref",
+        "verification"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "feedback"
+        },
+        "id": {
+          "type": "string"
+        },
+        "candidate_id": {
+          "type": "string"
+        },
+        "platform_stage": {
+          "type": "string"
+        },
+        "feedback_text": {
+          "type": "string"
+        },
+        "feedback_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verification": {
+          "enum": [
+            "draft",
+            "needs_review",
+            "human_confirmed"
+          ]
+        },
+        "buyer_supply_income": {
+          "$ref": "#/$defs/money"
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      }
+    },
+    "profitPlan": {
+      "type": "object",
+      "description": "full-cost/2.0；费率/分摊为显式估值，跨字段数量和金额业务规则由领域校验补充",
+      "properties": {
+        "version": {
+          "const": "full-cost/2.0"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "value_basis": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pack_labor": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "打包与操作人工；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "platform_warehouse": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "平台仓储综合服务；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "pre_sale_loss_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "售前拒收/滞销核销率；%；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "pre_sale_recovery_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "售前损耗货物采购成本回收比例；%；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "refund_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "商家承担退款/追缴率；%名义供货收入；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "refund_subsidy_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "退款中平台补贴覆盖比例；%退款额；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "refund_stock_recovery_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "退款商品可回收采购价值比例；%采购成本；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "return_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "国内退回服务触发率；%结算单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "return_freight": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次国内退回运费；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "return_handling": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次退回分拣操作；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "return_repack": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次退回重新包装；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "delay_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "备货时效扣款事件率；%结算单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "delay_charge": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次备货时效扣款估值；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "quality_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "质量事故扣款事件率；%结算单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "quality_charge": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次质量事故扣款估值；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "claim_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "额外售后赔付事件率；%结算单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "claim_charge": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次额外售后赔付估值；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "relabel_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "平台补贴标触发率；%结算单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "relabel_charge": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "每次额外贴标费用；元/次；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "epr": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "EPR及合规代扣预留；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "platform_fee_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "其他平台扣费预留；%名义供货收入；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "fx_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "收款换汇费用；%名义供货收入；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "shipping_subsidy": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "已核实运费补贴预算；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "epr_refund": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "已核实EPR退费预算；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "other_income": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "其他可核对补贴/赔付收入；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "salary_monthly": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "全店月运营人工（含用工附加）；元/月；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "rent_monthly": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "全店自有仓库租赁及水电；元/月；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "software_monthly": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "全店软件与管理费用；元/月；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "company_weighted_units": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "全店预计月加权结算销售单位；加权销售单位/月；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "sku_weight": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "本SKU固定费用分摊权重；倍；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "launch_cost": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "本SKU打样/拍摄/检测等一次性费用；元；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "lifetime_units": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "一次性费用预计摊销单位；销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "batch_units": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "首批备货销售单位；销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "deposit": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "本SKU分配的保证金本金；元；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "cash_days": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "资金占用周期；天；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "annual_finance_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "资金年化成本；%/年；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "indirect_tax_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "间接税抵扣后净负担预留；%名义供货收入；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "income_tax_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "企业所得税测算比例；%正税前收益；数值来源 CN-CIT"
+            },
+            "tax_addback": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "所得税纳税调增预算；元/销售单位；数值来源 PROFIT-ASSUMPTIONS"
+            },
+            "target_net_margin_percent": {
+              "type": [
+                "string",
+                "number"
+              ],
+              "description": "税后净收益率目标；%名义供货价；数值来源 PROFIT-ASSUMPTIONS"
+            }
+          }
+        },
+        "actual_costs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "other_income": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "stock_loss": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "refunds": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "relabel": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "shipping_subsidy": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "quality": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "epr": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "return_services": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "claim": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "epr_refund": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "indirect_tax": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "refund_subsidy": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "delay": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "fx": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "refund_recovery": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "platform_warehouse": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            },
+            "platform_fee": {
+              "type": "object",
+              "required": [
+                "amount",
+                "source_ref"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "sales_unit": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
