@@ -22,3 +22,36 @@ jobs:
         run: python -X utf8 -m unittest discover -s tests -v
       - name: Sources and contracts
         run: python -X utf8 scripts/validate_bundle.py
+  mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0.42
+        env:
+          MYSQL_ROOT_PASSWORD: ci-root-only-password
+          MYSQL_DATABASE: workbench_ci
+          MYSQL_USER: workbench_test
+          MYSQL_PASSWORD: ci-app-only-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      PYTHONUTF8: '1'
+      WORKBENCH_TEST_MYSQL: '1'
+      WORKBENCH_TEST_MYSQL_DATABASE: workbench_ci
+      WORKBENCH_MYSQL_HOST: 127.0.0.1
+      WORKBENCH_MYSQL_PORT: '3306'
+      WORKBENCH_MYSQL_USER: workbench_test
+      WORKBENCH_MYSQL_PASSWORD: ci-app-only-password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - name: Real MySQL storage, backup, rollback and workflow tests
+        run: python -X utf8 -m unittest discover -s app/tests -v

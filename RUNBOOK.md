@@ -2,16 +2,18 @@
 
 ## 环境与启动
 
-Python 3.11或更新版本。应用运行只使用标准库，无需pip安装、前端构建或AI账号。
+Python 3.11或更新版本、MySQL 8.0或更新版本。安装requirements中的PyMySQL驱动；无需前端构建或AI账号。
 
 在克隆后的仓库根目录执行：
 
 ```bash
+python -m pip install -r requirements.txt
+python scripts/configure-mysql.py
 python scripts/seed-demo.py
 python -m app.backend.api.server
 ```
 
-访问 http://127.0.0.1:8765 。第一条命令加载5个离线案例，不访问网络、不覆盖已有记录和政策。第二条命令启动服务，Ctrl+C退出。项目可放在任意目录，默认路径相对仓库计算。
+先启动已有MySQL服务。配置脚本隐藏输入root密码，创建项目库与受限应用账号，仅把应用凭据保存在本机`data/mysql.local.json`。随后加载5个离线案例，启动服务。访问 http://127.0.0.1:8765 ，Ctrl+C停止应用。MySQL服务需保持运行，环境变量优先于本机配置。
 
 Windows前台启动也可执行：
 
@@ -19,7 +21,7 @@ Windows前台启动也可执行：
 powershell -ExecutionPolicy Bypass -File scripts/start-workbench.ps1
 ```
 
-数据存于 `data/workbench.db`，备份在 `data/backups/`，页面快照在 `.cache/workbench/`。这些目录均不提交到Git。备份与恢复位于“设置与集成”，恢复前请自行保留当前数据。
+业务数据位于MySQL的`temu_workbench`库，完整JSON备份位于`data/backups/*.mysql.json`，页面快照在`.cache/workbench/`。本机配置、备份、旧SQLite文件与缓存均不提交Git。设置抽屉显示当前数据库，备份列表只提供当前引擎格式，恢复验证失败保留现有数据。
 
 ## 五个案例是什么
 
@@ -47,13 +49,17 @@ powershell -ExecutionPolicy Bypass -File scripts/start-workbench.ps1
 | `WORKBENCH_PORT` | 8765 |
 | `WORKBENCH_HOST` | 127.0.0.1，仅本机 |
 | `WORKBENCH_DATA_DIR` | 仓库下的data目录；自定义时用绝对路径 |
+| `WORKBENCH_DB_DRIVER` | 默认mysql；sqlite仅用于显式回退或测试 |
+| `WORKBENCH_MYSQL_HOST` / `WORKBENCH_MYSQL_PORT` | 127.0.0.1 / 3306 |
+| `WORKBENCH_MYSQL_DATABASE` | temu_workbench |
+| `WORKBENCH_MYSQL_USER` / `WORKBENCH_MYSQL_PASSWORD` | 受限应用账号及密码；不要使用root长期运行应用 |
 | `WORKBENCH_ROOT` | 自动识别仓库；通常无需指定 |
 
 DSH／DeepSeek／平台接口目前仍为预留，配置变量并不等于真实采集、读取或写入已经实现。没有这些账号也可完成本地案例。不要把API Key、Cookie或真实账户账单写进提交。
 
 ## 演示与部署边界
 
-这是没有登录和角色权限的本地MVP，不要直接用于承载真实商家敏感数据的公网生产部署。仓库不含穿透工具及配置；需要远程演示时，演示者自行管理临时连接、本机在线和展示数据。临时网址掉线不表示SQLite记录丢失。
+这是没有登录和角色权限的本地MVP，不要直接用于承载真实商家敏感数据的公网生产部署。仓库不含穿透工具及配置；需要远程演示时，演示者自行管理临时连接、本机在线和展示数据。临时网址掉线不表示MySQL记录丢失。MySQL数据目录由数据库服务管理，不等于项目下的data目录。
 
 ## 校验
 
@@ -68,3 +74,7 @@ python scripts/validate_bundle.py
 ```
 
 可选的JSON Schema库存在时，验证脚本会额外执行Schema检查；不存在时会明确报告未执行，应用本身无需安装它。
+
+## 从SQLite迁移
+
+先停止工作台，确认MySQL目标库为空，再运行 `python scripts/migrate-sqlite-to-mysql.py --app-stopped`。脚本先备份旧SQLite，再迁移全部五表并比较摘要；失败回滚、拒绝覆盖非空MySQL库。完整步骤和独立MySQL实例／Docker选项见[MySQL说明](docs/MYSQL.md)。

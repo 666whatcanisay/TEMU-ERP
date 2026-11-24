@@ -60,16 +60,19 @@ flowchart LR
 
 ## 快速运行
 
-需要 **Python 3.11+**，不需要安装第三方运行依赖，也不需要Node或模型API Key。
+需要 **Python 3.11+、MySQL 8.0+**。安装一个MySQL驱动，无需Node构建或模型API Key。
 
 ```bash
 git clone https://github.com/666whatcanisay/TEMU-ERP.git
 cd TEMU-ERP
+python -m pip install -r requirements.txt
+# 先确保MySQL服务已启动；下条命令通过隐藏输入读取root密码
+python scripts/configure-mysql.py
 python scripts/seed-demo.py
 python -m app.backend.api.server
 ```
 
-打开 **http://127.0.0.1:8765**。默认只监听本机；Ctrl+C停止。数据库自动保存在当前项目的 `data/workbench.db`。离线案例导入不访问网络，重复运行保留已有记录和修改。
+打开 **http://127.0.0.1:8765**。默认只监听本机；Ctrl+C停止。业务数据写入 **MySQL的 `temu_workbench` 库**。配置脚本会创建库内应用账号，将其随机密码仅保存到被Git忽略的 `data/mysql.local.json`；root密码不落盘。离线案例导入不访问外部网站，重复运行保留已有记录和修改。
 
 Windows也可运行 `powershell -ExecutionPolicy Bypass -File scripts/start-workbench.ps1`。如果不加载五商品案例，直接启动会建立最小初始样例。详见[运行与操作说明](RUNBOOK.md)。
 
@@ -81,18 +84,18 @@ Windows也可运行 `powershell -ExecutionPolicy Bypass -File scripts/start-work
 - **证据优先**：费用类别有来源不等于默认数值有依据；规则提取候选不自动成为已确认字段。
 - **维护明确口径**：Decimal、销售单位、币种检查、变更确认失效、原始核价留痕、防重复计费。
 
-技术栈：Python标准库HTTP服务、SQLite、原生HTML/CSS/JavaScript。采用分层单体，未引入微服务或复杂构建工具。
+技术栈：Python标准库HTTP服务、**MySQL 8 / InnoDB / PyMySQL**、原生HTML/CSS/JavaScript。采用分层单体，未引入微服务或复杂构建工具。
 
 ## 已验证与未接入
 
 | 状态 | 内容 |
 |---|---|
-| 已实现并验证 | 本地保存、商品及多SKU、反馈核价、完整利润、三类图表、费用浮层、导入导出、备份恢复 |
+| 已实现并验证 | 本地保存、商品及多SKU、反馈核价、完整利润、三类图表、费用浮层、导入导出、MySQL事务备份恢复 |
 | 已有公开页面案例 | HTTP读取、快照及规则提取；不保证任意网站可采集 |
 | 预留，未接入 | DSH、DeepSeek、公司真实类目模板、Temu只读账号、影刀／RPA执行 |
 | 需要真实业务验证 | 采购及账单、合规材料、税务口径、团队工时／遗漏率改善、平台通过率 |
 
-应用测试 **75项**、starter领域测试 **24项**。已做桌面和手机尺寸浏览器验证，以及独立HTML评审单的明细交互验证。CI会在Windows和Ubuntu执行代码测试；状态以仓库实际运行结果为准。
+应用基础测试 **75项**、真实MySQL集成测试 **11项**、starter领域测试 **24项**。已做桌面和手机尺寸浏览器验证，以及独立HTML评审单的明细交互验证。CI在Windows／Ubuntu执行基础测试，并使用MySQL 8.0容器执行完整集成测试；普通测试环境未启用MySQL时会明确跳过11项集成测试，状态以仓库实际运行结果为准。
 
 ```bash
 python -m unittest discover -s app/tests -v
@@ -108,6 +111,9 @@ python scripts/validate_bundle.py
 2. [工作流与业务边界](docs/WORKFLOW.md) — 从候选到反馈，什么时候补证据或暂缓。
 3. [架构与设计取舍](docs/ARCHITECTURE.md) — 模块职责和后续扩展方式。
 4. [利润计算与来源](docs/PROFIT_MODEL.md) — 成本、门槛、风险假设与防重复。
-5. [来源登记](research/sources.json) / [字段映射候选](contracts/temu_field_map.json) — 可追溯依据，不等于真实后台模板。
+5. [MySQL迁移与恢复](docs/MYSQL.md) — 数据库配置、完整迁移、对账、备份与回滚。
+6. [来源登记](research/sources.json) / [字段映射候选](contracts/temu_field_map.json) — 可追溯依据，不等于真实后台模板。
 
 仓库不包含工作中的数据库、登录凭据、浏览器会话、下载的第三方源码和安装程序。[第三方参考说明](docs/THIRD_PARTY.md)列出了资料用途。临时公网地址依赖本机和穿透服务，不作为仓库的长期演示入口。
+
+从旧版SQLite升级：停止工作台，配置MySQL后执行 `python scripts/migrate-sqlite-to-mysql.py --app-stopped`。原库先备份，再将五类表在一个事务中迁移；非空目标库拒绝覆盖。应用不会在MySQL连接失败时偷偷切回SQLite。详见[迁移说明](docs/MYSQL.md)。

@@ -34,6 +34,11 @@ class ImportExportTests(unittest.TestCase):
         self.src.store.close()
         self.tmp.cleanup()
 
+    def destination(self, name):
+        service = make_service(self.tmp.name, name)
+        self.addCleanup(service.store.close)
+        return service
+
     def test_json_roundtrip_preserves_records_and_long_id(self):
         cand = load("synthetic-candidate.json")
         cand["platform_product_id"] = "5555555555555555555"
@@ -41,7 +46,7 @@ class ImportExportTests(unittest.TestCase):
         bundle = self.src.export_bundle("json")
         self.assertEqual(bundle["format"], "json")
 
-        dst = make_service(self.tmp.name, "dst1.db")
+        dst = self.destination("dst1.db")
         report = dst.import_bundle("json", json.dumps(bundle["content"], ensure_ascii=False))
         self.assertFalse(report["errors"], report["errors"])
         ids = [r["id"] for r in report["imported"] if r["record_type"] == "candidate"]
@@ -60,7 +65,7 @@ class ImportExportTests(unittest.TestCase):
         ]
         self.src.save_candidate(cand)
         bundle = self.src.export_bundle("json")
-        dst = make_service(self.tmp.name, "dst5.db")
+        dst = self.destination("dst5.db")
         report = dst.import_bundle("json", json.dumps(bundle["content"], ensure_ascii=False))
         self.assertFalse(report["errors"], report["errors"])
         loaded = dst.store.get_record("candidate", "DEMO-ORG-001")
@@ -73,7 +78,7 @@ class ImportExportTests(unittest.TestCase):
     def test_csv_export_and_import_roundtrip(self):
         csv_text = self.src.export_bundle("csv")["content"]
         self.assertIn("非 Temu 导入模板", csv_text)
-        dst = make_service(self.tmp.name, "dst2.db")
+        dst = self.destination("dst2.db")
         report = dst.import_bundle("csv", csv_text)
         self.assertFalse(report["errors"], report["errors"])
         candidates = [r for r in report["imported"] if r["record_type"] == "candidate"]
@@ -83,13 +88,13 @@ class ImportExportTests(unittest.TestCase):
         dst.store.close()
 
     def test_csv_reports_bad_rows(self):
-        dst = make_service(self.tmp.name, "dst3.db")
+        dst = self.destination("dst3.db")
         report = dst.import_bundle("csv", "col1,col2\na,b\n")
         self.assertTrue(report["errors"])
         dst.store.close()
 
     def test_json_rejects_foreign_bundle(self):
-        dst = make_service(self.tmp.name, "dst4.db")
+        dst = self.destination("dst4.db")
         report = dst.import_bundle("json", json.dumps({"records": {}}))
         self.assertTrue(report["errors"])
         dst.store.close()

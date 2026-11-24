@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: mysql:8.0.42
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: temu_workbench
+      MYSQL_USER: temu_workbench_app
+      MYSQL_PASSWORD: ${WORKBENCH_MYSQL_PASSWORD:?Set an application password in your local environment}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set a separate root password in your local environment}
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+volumes:
+  mysql-data:

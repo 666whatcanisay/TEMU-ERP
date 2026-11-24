@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from ..adapters import exporter_internal as exporter
-from ..adapters.storage_sqlite import SQLiteStore
+from ..adapters.storage_relational import RelationalStore
 from ..application import fillplan
 from ..domain import evidence, models, pricing
 from ..domain import profit_model
@@ -53,7 +53,7 @@ def _eval_to_dict(result: pricing.Evaluation) -> dict[str, Any]:
 
 
 class WorkbenchService:
-    def __init__(self, store: SQLiteStore, collector=None, rule_extractor=None,
+    def __init__(self, store: RelationalStore, collector=None, rule_extractor=None,
                  dsh=None, deepseek=None, registry_sources: list[dict[str, Any]] | None = None,
                  field_map: dict[str, Any] | None = None):
         self.store = store
@@ -91,6 +91,7 @@ class WorkbenchService:
             "adapter_statuses": self.store.adapter_statuses(),
             "dto_version": models.DTO_VERSION,
             'profit_schema':profit_model.SCHEMA,
+            'database':{'engine':self.store.engine,'location':self.store.location},
         }
 
     # ---------- policy ----------

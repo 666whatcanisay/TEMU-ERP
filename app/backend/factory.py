@@ -7,7 +7,7 @@ from pathlib import Path
 from .adapters.collector_http import HttpEvidenceCollector
 from .adapters.extraction_llm import DSHExtractor, DeepSeekApiExtractor
 from .adapters.extraction_rules import RuleExtractor
-from .adapters.storage_sqlite import SQLiteStore
+from .adapters.store_factory import create_store
 from .application.services import WorkbenchService
 from . import config
 
@@ -17,7 +17,7 @@ def _load_json(path: Path) -> dict:
 
 
 def build_service(seed: bool = True) -> WorkbenchService:
-    store = SQLiteStore(config.DB_PATH)
+    store = create_store()
     collector = HttpEvidenceCollector(config.CACHE_DIR / "snapshots")
     rule_extractor = RuleExtractor()
     dsh = DSHExtractor()

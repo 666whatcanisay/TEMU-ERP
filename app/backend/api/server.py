@@ -67,8 +67,10 @@ class Handler(BaseHTTPRequestHandler):
         if parts and parts[0] == "static":
             return self._static("/".join(parts[1:]))
         if path == "/api/health":
-            return self._send_json({"ok": True, "mode": config.MODE,
-                                    "live_write_enabled": config.LIVE_WRITE_ENABLED})
+            ok = SERVICE.store.check_health()
+            return self._send_json({"ok": ok, "mode": config.MODE,
+                                    "database":config.database_info(),
+                                    "live_write_enabled": config.LIVE_WRITE_ENABLED},200 if ok else 503)
         if path == "/api/meta":
             return self._send_json(SERVICE.registry())
         if path == "/api/candidates":
@@ -151,7 +153,10 @@ class Handler(BaseHTTPRequestHandler):
             SERVICE.backup(path)
             return self._send_json({"backup": path.name})
         if len(parts) == 2 and parts == ["api", "restore"]:
-            errors = SERVICE.restore(str(config.DATA_DIR / "backups" / body.get("filename", "")))
+            filename = body.get('filename')
+            if not isinstance(filename,str) or Path(filename).name != filename or not filename.endswith(SERVICE.store.backup_suffix):
+                return self._send_json({'errors':['请选择当前数据库类型的有效备份文件']},400)
+            errors = SERVICE.restore(str(self._backup_dir() / filename))
             return self._send_json({"errors": errors}, 200 if not errors else 400)
         return self._send_json({"error": "not found"}, 404)
 
@@ -179,25 +184,26 @@ class Handler(BaseHTTPRequestHandler):
     def _backup_path(self) -> Path:
         from datetime import datetime
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        return self._backup_dir() / f"workbench-backup-{stamp}.db"
+        return self._backup_dir() / f"workbench-backup-{stamp}{SERVICE.store.backup_suffix}"
 
     def _list_backups(self) -> list[dict]:
         return [{"filename": p.name, "bytes": p.stat().st_size,
                  "modified": p.stat().st_mtime}
-                for p in sorted(self._backup_dir().glob("*.db"), reverse=True)]
+                for p in sorted(self._backup_dir().glob('*'+SERVICE.store.backup_suffix), reverse=True)]
 
 
 def main() -> None:
-    # Serialize this local single-user app's SQLite operations and backup/restore.
+    # Keep this single-user HTTP service serialized across storage and backup operations.
     server = HTTPServer((config.HOST, config.PORT), Handler)
     print(f"Temu 选品提报工作台已启动: http://{config.HOST}:{config.PORT}")
-    print("退出方式: 在本窗口按 Ctrl+C。数据保存在", config.DB_PATH)
+    print("退出方式: 在本窗口按 Ctrl+C。数据库:", SERVICE.store.engine, SERVICE.store.location)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\n正在停止服务…")
     finally:
         server.server_close()
+        SERVICE.store.close()
 
 
 if __name__ == "__main__":
