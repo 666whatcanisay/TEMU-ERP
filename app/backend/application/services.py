@@ -233,15 +233,19 @@ class WorkbenchService:
 
     def save_candidate(self, record: dict[str, Any], reviewer: str | None = None) -> list[str]:
         record.setdefault("record_type", "candidate")
+        if record['record_type'] != 'candidate':
+            return ['record_type must be candidate']
         record.setdefault("mode_assumption", "fully_managed")
         record.setdefault("internal_decision", "research")
         errors = models.validate_candidate(record)
         if errors:
             return errors
-        existing = self.store.get_record("candidate", record["id"])
-        if existing:
-            self._record_field_revisions(existing, record, reviewer)
-        return self.store.upsert_record(record)
+        # A failed record write must not leave a history claiming it succeeded.
+        with self.store.transaction():
+            existing = self.store.get_record("candidate", record["id"])
+            if existing:
+                self._record_field_revisions(existing, record, reviewer)
+            return self.store.upsert_record(record)
 
     def _record_field_revisions(self, before: dict[str, Any], after: dict[str, Any],
                                 reviewer: str | None) -> None:

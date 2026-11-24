@@ -75,7 +75,7 @@ $env:WORKBENCH_TEST_MYSQL_DATABASE='temu_workbench_test'
 python -m unittest discover -s app/tests -v
 ```
 
-若已有配置，应由管理员提前创建并授权独立测试库；配置脚本不会为了测试重置现有凭据。GitHub Actions另设MySQL8容器执行11项真实集成测试，覆盖中文、ID、全表迁移、损坏备份保护、事务回滚、闲置连接重开及完整利润工作流。
+若已有配置，应由管理员提前创建并授权独立测试库；配置脚本不会为了测试重置现有凭据。GitHub Actions另设MySQL8容器执行12项真实集成测试，覆盖中文、ID、全表迁移、损坏备份保护、恢复及商品/历史保存回滚、闲置连接重开及完整利润工作流。
 
 - [PyMySQL连接参数](https://pymysql.readthedocs.io/en/latest/modules/connections.html)：UTF8、autocommit及连接行为。
 - [MySQL事务与一致性](https://dev.mysql.com/doc/refman/8.0/en/innodb-consistent-read.html)：InnoDB一致性读。

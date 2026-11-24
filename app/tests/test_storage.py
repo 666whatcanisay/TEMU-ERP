@@ -1,10 +1,13 @@
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
+import copy
 from pathlib import Path
 
 from app.backend.adapters.storage_sqlite import SQLiteStore
 from app.backend.domain import models
+from app.backend.application.services import WorkbenchService
 
 
 def candidate_record(cid="TEST-001", platform_id=None):
@@ -66,6 +69,23 @@ class StorageTests(unittest.TestCase):
         bad["skus"][0]["platform_sku_id"] = 12345
         errors = self.store.upsert_record(bad)
         self.assertTrue(any("platform_sku_id" in e for e in errors))
+
+    def test_failed_candidate_save_rolls_back_revision_and_record(self):
+        service = WorkbenchService(self.store)
+        self.assertEqual(service.save_candidate(candidate_record()), [])
+        before = self.store.get_record('candidate', 'TEST-001')
+        history = self.store.revision_history('TEST-001')
+        changed = copy.deepcopy(before)
+        changed['title'] = 'Changed title'
+        changed['skus'][0]['pieces'] = 4
+        with patch.object(self.store, 'upsert_record', side_effect=RuntimeError('write interrupted')):
+            with self.assertRaisesRegex(RuntimeError, 'write interrupted'):
+                service.save_candidate(changed, 'tester')
+        self.assertEqual(self.store.get_record('candidate', 'TEST-001'), before)
+        self.assertEqual(self.store.revision_history('TEST-001'), history)
+        self.assertEqual(service.save_candidate(changed, 'tester'), [])
+        self.assertEqual(self.store.get_record('candidate', 'TEST-001')['title'], 'Changed title')
+        self.assertEqual({r['field_key'] for r in self.store.revision_history('TEST-001')}, {'title', 'pieces'})
 
 
 if __name__ == "__main__":

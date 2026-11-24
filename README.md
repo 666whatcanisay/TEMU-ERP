@@ -1,119 +1,194 @@
-# TEMU-ERP · 全托管选品与买手提报工作台
+<p align="center">
+  <img src="docs/assets/showcase/cover.svg" alt="TEMU-ERP：全托管选品与买手提报工作台" width="100%">
+</p>
 
-**把“这个商品为什么值得供货”变成一条有依据、能算账、能复用资料的工作流。**
+# TEMU-ERP
 
-面向跨境电商全托管供货场景的可运行MVP。围绕德国市场普通非电收纳用品，把候选研究、SKU资料、完整成本、买手核价记录和内部评审资料放在同一条链路里。
+**把“这个商品为什么值得供货”变成有来源、能算账、可复用资料的工作流。**
 
-这是从开发能力切入业务实操的面试作品。目前是单人本地工作台，并非完整生产ERP；没有接入真实Temu店铺或自动上架。
+Python · MySQL 8 / InnoDB · Decimal · 原生 JavaScript · SVG 图表
 
-![候选研究：五商品基准与保守净收益对比](docs/assets/research.png)
+[![Verify workbench](https://github.com/666whatcanisay/TEMU-ERP/actions/workflows/ci.yml/badge.svg)](https://github.com/666whatcanisay/TEMU-ERP/actions/workflows/ci.yml)
 
-## 解决什么问题
+[界面预览](#界面预览) · [业务工作流](#业务工作流) · [技术架构](#技术架构) · [设计取舍](#设计取舍) · [快速运行](#快速运行) · [代码阅读路线](#代码阅读路线)
 
-- **选品结论难复核**：商品尺寸、件数、价格背景与来源关联，区分“规格可比”“规格不同”“资料不足”。
-- **只算采购差价容易高估利润**：拆开退款、退回、扣款、人工、平台服务、分摊、资金和税费，合计到每个销售单位。
-- **买手核价后要重复改表**：核价关联对应SKU，保留原报价和反馈历史，重新计算收益与底价。
-- **研究资料重复录入**：同一份商品资料可生成内部评审HTML、结构化JSON及只读填写计划。
+面向 **Temu 全托管供货场景**的选品与内部提报 MVP，以德国市场普通非电收纳用品为研究范围。使用者可以汇集市场证据、维护商品与 SKU、核算完整成本、登记买手核价，再生成内部评审资料。
 
-## 工作流
+项目从一个具体问题出发：**采购差价看起来够高，为什么供货后仍可能不赚钱？** 把退款、退回、扣款准备、人工、分摊、资金和税费纳入同一销售单位，才有条件讨论可接受的供货价。当前定位是单人本地工作台；实际类目模板、供货责任及平台任务仍需真实后台核验。
 
-```mermaid
-flowchart LR
-  A[候选研究\n资料与来源] --> B[商品资料\nSKU、包装与成本]
-  B --> C[完整利润\n基准 / 保守 / 底价]
-  C --> D{内部判断}
-  D -->|补资料 / 议价 / 暂缓| A
-  D -->|准备评审| E[内部提报资料]
-  E --> F[人工处理真实后台任务]
-  F --> G[记录反馈与买手核价]
-  G --> C
-```
+## 界面预览
 
-真实后台任务由人工处理，项目没有执行该步骤。全托管商品能否上架、核价及任务要求以实际平台和买手流程为准。
+下面均为实际运行界面，使用独立 MySQL 演示库和仓库内 5 个离线案例，不读取工作中的商家数据库。公开规格与预算假设分别登记；采购报价、概率、公司门槛和买手反馈是案例输入。[截图与数据说明](docs/assets/showcase/README.md)
 
-## 界面与交互
+### 1. 候选研究：先看供货空间与风险
 
-主导航只有 **候选研究 / 商品提报 / 反馈跟进**。低频设置、来源和接口状态收在抽屉中；新建候选直接进入信息填写。
+![五商品基准与保守净收益对比](docs/assets/showcase/research.jpg)
 
-![商品核价、完整成本和利润图表](docs/assets/product.png)
+比较基准与保守情景，亏损直接显示；商品详情关联规格、套装件数、观察日期和来源。图上是各销售单位的预算净收益，不能推断真实销量、市场排名或选品必然成功。
 
-鼠标移到瀑布图的项目、金额或柱子，可查看费用组成、当前公式、四位小数金额及来源；支持键盘和手机点击。明细直接取后端计算结果，切换基准／保守后同步变化。
+### 2. 商品提报：报价拆成完整成本与底价
 
-![退款风险的可追溯计算明细](docs/assets/cost-detail.png)
+![商品资料入口、完整成本、收益瀑布图与核价敏感性曲线](docs/assets/showcase/product.jpg)
 
-## 一个能算清楚的案例
+新建后可填写商品、规格、包装和成本。关键结果是 **供货价 / 完整成本 / 净收益预算 / 目标底价**；瀑布图解释费用组成，敏感性曲线解释核价变化的影响。基准与保守使用同一套后端规则。
 
-六件套收纳盒当前案例核价为 **21元／套**：
+### 3. 费用明细：金额、公式和来源一起查看
 
-| 指标 | 结果 |
-|---|---:|
-| 原五项可变成本 | 12.50元 |
-| 原五项贡献 | 8.50元，不能当最终净利润 |
-| 补全后的成本，含税费准备 | 16.5184元 |
-| 基准税后净收益预算 | **4.4816元／套** |
-| 保守情景净收益预算 | **2.1295元／套** |
-| 综合目标底价 | 20.84元／套 |
+![退款风险明细：六项公式、四位小数金额与来源链接](docs/assets/showcase/cost-detail.jpg)
 
-共有5个离线商品案例，含完整成本后亏损的PP小盒。公开规格有原文；采购、公司费用、门槛、扣款概率和买手反馈属于明确标记的预算／构造案例，不是实际店铺业绩或Temu官方费率。德国零售价格不直接当人民币供货收入。
+悬停、键盘聚焦或点击图表项目，可查看费用组成、公式、金额和来源；点击可固定，Esc 或关闭按钮退出。ERP 文档支持费用类别，不把预算概率冒充成平台统一费率。导出 HTML 也保留费用交互。
 
-计算细节、两种利润率的区别及来源见 **[利润模型](docs/PROFIT_MODEL.md)**。
+### 4. 反馈跟进：核价关联 SKU，保留原报价
+
+![反馈历史：按SKU保留不同核价与凭证索引](docs/assets/showcase/feedback.jpg)
+
+记录日期、原话、凭证和 SKU。最新有效核价只影响对应 SKU，原报价保留。缺少必要凭证时保存为草稿，不自动变成平台已确认事实。
+
+### 5. 内部评审：同一份资料生成交付结果
+
+![内部供货评审单：价格、成本、收益与待核对清单](docs/assets/showcase/review.jpg)
+
+HTML、JSON 和只读字段填写计划复用同一份资料，集中展示待核对项。**这是内部评审资料，不是 Temu 官方导入模板，不执行真实提报或上架。**
+
+## 场景与功能
+
+| 工作中的问题 | 当前能力 | 可检查的工程处理 |
+|---|---|---|
+| 不同尺寸、件数的竞品被直接比价 | 来源、规格、销售单位及可比性判断 | 未知销量保留 `null`，跨币种不直接相减 |
+| 采购差价被当作最终利润 | 完整成本、基准/保守、目标底价 | Decimal、明细四位小数、旧五项贡献单独命名 |
+| 一次核价影响全部变体 | SKU 级反馈与独立重算 | 关联商家 SKU、保留原价与反馈历史 |
+| 商品资料分散、重复整理 | 多 SKU、材料登记、内部评审导出 | 资料、计算和导出共享业务数据 |
+| 修改历史与商品保存不同步 | 商品和修订历史原子保存 | 同事务提交，失败一起回滚 |
+| 换数据库要重写业务 | MySQL 主存储、迁移与恢复 | 存储适配器隔离，五表摘要对账 |
+
+## 业务工作流
+
+![候选、SKU、成本、评审、反馈、重新评估六步工作流](docs/assets/showcase/workflow.svg)
+
+1. **候选与证据**：记录市场参照，核对尺寸、材质、件数和价格背景。
+2. **SKU 与供货资料**：维护变体、包装、重量、供应商与可供数量；平台 ID 未返回则留空。
+3. **完整成本**：输入承担费用，比较两种情景，反推可接受底价。
+4. **内部判断与评审**：补证据、议价、暂缓或准备内部资料，明确缺口。
+5. **人工处理平台任务**：按真实后台与买手要求操作，再登记反馈。
+6. **重新评估**：核价或成本变化后再算，决定继续、降本或放弃。
+
+全托管场景下，工作台辅助准备与判断；最终核价、任务及售卖状态以平台实际结果为准。[详细工作流](docs/WORKFLOW.md)
+
+## 一个能复核的算例
+
+六件套案例 `DE-DRAWER-006` / `ORG-HONEY-BRN-06`，当前核价 **21 元/套**：
+
+| 口径 | 结果 | 含义 |
+|---|---:|---|
+| 原五项可变成本 | 12.50 元 | 保留早期贡献口径，解释口径差异 |
+| 原五项贡献 | 8.50 元 | 不是最终净收益 |
+| 完整成本，含税费准备 | 16.5184 元 | 采购、履约、风险、平台服务、分摊、资金和税费 |
+| 基准净收益预算 | **4.4816 元/套** | 21 − 16.5184 |
+| 保守净收益预算 | **2.1295 元/套** | 风险与成本压力情景 |
+| 综合目标底价 | 20.84 元/套 | 同时考虑贡献门槛与净收益目标 |
+
+另有竹制整理盒、布艺箱、内衣格及 PP 小盒，包含完整成本后亏损的反例。德国站外零售价仅作市场观察，不当作人民币供货收入。40% 贡献门槛与 15% 净收益目标是不同口径的案例政策。[完整公式、假设和来源](docs/PROFIT_MODEL.md)
+
+## 技术架构
+
+![前端、API、应用、领域、MySQL与外部适配器边界](docs/assets/showcase/architecture.svg)
+
+| 层次 | 技术与职责 | 主要入口 |
+|---|---|---|
+| 展示 | 原生 HTML/CSS/JS，三个工作区，SVG 图表与费用浮层 | [前端](app/frontend/static/) |
+| 接口与用例 | Python 标准库 HTTP，校验、SKU 核价、准备状态与导出 | [server.py](app/backend/api/server.py)、[services.py](app/backend/application/services.py) |
+| 领域 | 证据比较、金额与经营规则、完整利润 | [domain](app/backend/domain/) |
+| 持久化 | MySQL 8 / InnoDB / utf8mb4 / PyMySQL | [storage_mysql.py](app/backend/adapters/storage_mysql.py) |
+| 外部适配 | 公开网页读取、快照、规则提取、内部导出 | [adapters](app/backend/adapters/) |
+| 契约与依据 | 字段映射候选、来源登记、离线案例 | [contracts](contracts/)、[research](research/)、[fixtures](fixtures/) |
+
+分层单体，业务计算不依赖数据库与浏览器。SQLite 保留用于旧数据迁移、显式回退和基础测试；**默认使用 MySQL，连接失败不会静默改用 SQLite**。[架构说明](docs/ARCHITECTURE.md)
+
+## 设计取舍
+
+**一份计算结果服务多个界面。** 后端输出结构化费用行，图表、浮层与评审单消费同一结果，避免前端另算金额。[计算规则](app/backend/domain/profit_model.py) · [图表渲染](app/frontend/static/profit-view.js)
+
+**金额和单位先于推荐结论。** Decimal 保留明细精度；供货、零售、件数与币种分开。未知成本、未确认政策不能自动得出“可选品”。[五项贡献](app/backend/domain/pricing.py) · [完整利润测试](app/tests/test_full_profit.py)
+
+**来源存在不等于数值已核验。** 原始来源、提取候选和人工确认分开；费用类别出处与预算值分开。真实账单可替换假设，不必改算法。[证据逻辑](app/backend/domain/evidence.py) · [来源登记](research/sources.json)
+
+**失败不能留下成功历史。** 商品与修订同事务提交；故障注入检查两者不变，SQLite 与真实 MySQL 执行同一契约测试。[保存用例](app/backend/application/services.py) · [回滚测试](app/tests/test_storage.py)
+
+**简洁来自渐进展示。** 主导航只留三个工作区，低频设置与来源放抽屉，公式按需展开；亏损、缺失和低于门槛直接显示。[工作流 UI](app/frontend/static/workflow.js) · [费用交互](app/frontend/static/profit-popover.js)
+
+**预留接口有明确状态。** DSH、DeepSeek、真实模板、平台只读及 RPA 未接入，不返回伪成功。内部导出和字段计划可用，后台写入不执行。[端口契约](app/backend/domain/ports.py) · [只读计划](app/backend/application/fillplan.py)
 
 ## 快速运行
 
-需要 **Python 3.11+、MySQL 8.0+**。安装一个MySQL驱动，无需Node构建或模型API Key。
+需要 **Python 3.11+、已启动的 MySQL 8.0+**，无需 Node 构建或模型 API Key。CI 使用 Python 3.12 与 MySQL 8.0.42，其他版本未逐一验证。
 
 ```bash
 git clone https://github.com/666whatcanisay/TEMU-ERP.git
 cd TEMU-ERP
 python -m pip install -r requirements.txt
-# 先确保MySQL服务已启动；下条命令通过隐藏输入读取root密码
 python scripts/configure-mysql.py
 python scripts/seed-demo.py
 python -m app.backend.api.server
 ```
 
-打开 **http://127.0.0.1:8765**。默认只监听本机；Ctrl+C停止。业务数据写入 **MySQL的 `temu_workbench` 库**。配置脚本会创建库内应用账号，将其随机密码仅保存到被Git忽略的 `data/mysql.local.json`；root密码不落盘。离线案例导入不访问外部网站，重复运行保留已有记录和修改。
+打开 [本地工作台](http://127.0.0.1:8765/)。默认仅监听本机，Ctrl+C 停止。配置脚本隐藏读取 root 密码，创建库内应用账号；随机应用密码只存入被忽略的 `data/mysql.local.json`，root 密码不落盘。重复导入保留已有记录。
 
-Windows也可运行 `powershell -ExecutionPolicy Bypass -File scripts/start-workbench.ps1`。如果不加载五商品案例，直接启动会建立最小初始样例。详见[运行与操作说明](RUNBOOK.md)。
+Windows 可运行 `powershell -ExecutionPolicy Bypass -File scripts/start-workbench.ps1`。`.env.example` 是变量说明，应用不会自动加载 `.env`。若先启动过最小样例，案例导入会保留原政策，需在设置中核对。[从零启动与常见问题](docs/SETUP.md) · [日常操作](RUNBOOK.md)
 
-## 设计思路
+<details>
+<summary>从旧版 SQLite 迁移到 MySQL</summary>
 
-- **先闭环一条业务路径**：在真实公司模板和数据未知时，先验证资料、计算与反馈能否复用。
-- **高内聚、低耦合**：领域计算、应用用例、存储／采集适配器与UI分层；费用浮层只负责交互。
-- **渐进展示**：首屏只给关键结果与风险，明细、假设、公式和来源按需展开。
-- **证据优先**：费用类别有来源不等于默认数值有依据；规则提取候选不自动成为已确认字段。
-- **维护明确口径**：Decimal、销售单位、币种检查、变更确认失效、原始核价留痕、防重复计费。
+停止工作台、配置 MySQL，确认目标库为空，再执行：
 
-技术栈：Python标准库HTTP服务、**MySQL 8 / InnoDB / PyMySQL**、原生HTML/CSS/JavaScript。采用分层单体，未引入微服务或复杂构建工具。
+```bash
+python scripts/migrate-sqlite-to-mysql.py --app-stopped
+```
 
-## 已验证与未接入
+先备份原库，五表同事务迁移并摘要对账；拒绝覆盖非空库。完整 JSON 备份包含记录、修订、提报、快照和适配器状态，损坏或中途失败不会留下半恢复数据。[迁移与恢复](docs/MYSQL.md)
 
-| 状态 | 内容 |
-|---|---|
-| 已实现并验证 | 本地保存、商品及多SKU、反馈核价、完整利润、三类图表、费用浮层、导入导出、MySQL事务备份恢复 |
-| 已有公开页面案例 | HTTP读取、快照及规则提取；不保证任意网站可采集 |
-| 预留，未接入 | DSH、DeepSeek、公司真实类目模板、Temu只读账号、影刀／RPA执行 |
-| 需要真实业务验证 | 采购及账单、合规材料、税务口径、团队工时／遗漏率改善、平台通过率 |
+</details>
 
-应用基础测试 **75项**、真实MySQL集成测试 **11项**、starter领域测试 **24项**。已做桌面和手机尺寸浏览器验证，以及独立HTML评审单的明细交互验证。CI在Windows／Ubuntu执行基础测试，并使用MySQL 8.0容器执行完整集成测试；普通测试环境未启用MySQL时会明确跳过11项集成测试，状态以仓库实际运行结果为准。
+## 验证与边界
+
+**76 项应用基础 + 12 项真实 MySQL 集成 + 24 项 starter 领域测试，共 112 项。** 无 MySQL 环境时，12 项集成测试明确跳过，不能算作通过。CI 在 Windows、Ubuntu 运行基础测试，另用 MySQL 容器运行集成测试。
 
 ```bash
 python -m unittest discover -s app/tests -v
-# 在 starter/ 目录下执行：
-python -m unittest discover -s tests -v
-# 回到仓库根目录：
 python scripts/validate_bundle.py
+python scripts/validate_docs.py
+cd starter
+python -m unittest discover -s tests -v
 ```
 
-## 面试阅读路线
+重点覆盖金额对账、亏损与底价、SKU 核价、确认失效、导入往返、长 ID、迁移、备份损坏与事务中断。文档检查覆盖本地链接、锚点、图片和 SVG 结构，不承诺外部网址永久有效。截图证明界面能运行，不能证明商业收益。
 
-1. [三分钟面试演示](docs/INTERVIEW.md) — 展示什么、怎么讲、哪些效果尚未证明。
-2. [工作流与业务边界](docs/WORKFLOW.md) — 从候选到反馈，什么时候补证据或暂缓。
-3. [架构与设计取舍](docs/ARCHITECTURE.md) — 模块职责和后续扩展方式。
-4. [利润计算与来源](docs/PROFIT_MODEL.md) — 成本、门槛、风险假设与防重复。
-5. [MySQL迁移与恢复](docs/MYSQL.md) — 数据库配置、完整迁移、对账、备份与回滚。
-6. [来源登记](research/sources.json) / [字段映射候选](contracts/temu_field_map.json) — 可追溯依据，不等于真实后台模板。
+| 已实现 | 待接入或待业务验证 |
+|---|---|
+| 商品、多 SKU、证据、反馈、完整成本、三类图表与费用明细 | 真实公司采购、结算、承担费用与税务口径 |
+| 本地持久化、导入导出、只读计划、完整备份恢复 | 当前后台模板、DSH / DeepSeek、平台与 RPA |
+| 单人工作台与案例流程 | 账号权限、多用户冲突处理、生产公网部署 |
 
-仓库不包含工作中的数据库、登录凭据、浏览器会话、下载的第三方源码和安装程序。[第三方参考说明](docs/THIRD_PARTY.md)列出了资料用途。临时公网地址依赖本机和穿透服务，不作为仓库的长期演示入口。
+当前没有登录/角色权限，也没有过期草稿的版本冲突保护；两个标签页编辑同一商品可能覆盖更新。提效需在真实试用中记录准备时间、遗漏数和持续采用情况，尚无前后对照数据。
 
-从旧版SQLite升级：停止工作台，配置MySQL后执行 `python scripts/migrate-sqlite-to-mysql.py --app-stopped`。原库先备份，再将五类表在一个事务中迁移；非空目标库拒绝覆盖。应用不会在MySQL连接失败时偷偷切回SQLite。详见[迁移说明](docs/MYSQL.md)。
+## 代码阅读路线
+
+| 想确认的问题 | 建议入口 | 继续看 |
+|---|---|---|
+| 4.48 元怎么来的？ | [profit_model.py](app/backend/domain/profit_model.py) 的 `scenario` / `evaluate_full` | [利润模型](docs/PROFIT_MODEL.md)、[算例测试](app/tests/test_full_profit.py) |
+| 核价为何只影响一个 SKU？ | [services.py](app/backend/application/services.py) 的 `_latest_buyer_income` / `sku_view` | [用例测试](app/tests/test_services.py) |
+| 保存与历史怎样一致？ | [services.py](app/backend/application/services.py) 的 `save_candidate` | [存储测试](app/tests/test_storage.py)、[MySQL 测试](app/tests/test_mysql_storage.py) |
+| 换数据库为何不用重写图表？ | [共享语义](app/backend/adapters/storage_relational.py)、[MySQL](app/backend/adapters/storage_mysql.py) | [架构](docs/ARCHITECTURE.md)、[迁移脚本](scripts/migrate-sqlite-to-mysql.py) |
+| 来源如何避免变成假事实？ | [evidence.py](app/backend/domain/evidence.py)、[规则提取](app/backend/adapters/extraction_rules.py) | [来源](research/sources.json)、[映射候选](contracts/temu_field_map.json) |
+| 页面如何保持简洁？ | [workflow.js](app/frontend/static/workflow.js)、[profit-popover.js](app/frontend/static/profit-popover.js) | [工程指南](docs/ENGINEERING_GUIDE.md) |
+
+## 文档导航
+
+- [三分钟面试演示](docs/INTERVIEW.md)：演示顺序、技术追问与业务边界。
+- [业务工作流](docs/WORKFLOW.md)：每一步做什么，何时补资料、议价或暂缓。
+- [工程阅读指南](docs/ENGINEERING_GUIDE.md)：UI、用例、领域与存储如何协作。
+- [启动指南](docs/SETUP.md) / [操作手册](RUNBOOK.md)：环境、配置和故障定位。
+- [架构](docs/ARCHITECTURE.md) / [利润模型](docs/PROFIT_MODEL.md) / [MySQL](docs/MYSQL.md)：实现依据。
+- [本轮检查](docs/PROJECT_REVIEW.md)：参考、修复、验证与未解决边界。
+- [第三方资料](docs/THIRD_PARTY.md)：资料用途和许可边界。
+
+仓库不包含工作数据库、凭据、浏览器会话、第三方下载源码或安装程序。临时公网地址依赖本机与穿透服务，不作长期入口。本项目未获 Temu 官方认证或授权背书。

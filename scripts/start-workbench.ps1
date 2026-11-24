@@ -1,7 +1,7 @@
 # 启动 Temu 全托管选品与买手提报工作台（本地，仅监听 127.0.0.1）
 # 用法：在 E:\TemuBuyerWorkbench 目录下运行
 #   powershell -ExecutionPolicy Bypass -File scripts\start-workbench.ps1
-# 退出：在本窗口按 Ctrl+C。数据文件：data\workbench.db
+# 退出：在本窗口按 Ctrl+C。业务数据：MySQL temu_workbench；本机凭据：data\mysql.local.json
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Set-Location $taskRoot

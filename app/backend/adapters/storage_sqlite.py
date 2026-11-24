@@ -6,7 +6,7 @@ the local source of truth: browser temporary state must not substitute for it.
 from __future__ import annotations
 
 import sqlite3
-from contextlib import closing
+from contextlib import closing, contextmanager
 from pathlib import Path
 
 from .storage_relational import RelationalStore
@@ -22,6 +22,7 @@ class SQLiteStore(RelationalStore):
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
+        self._in_transaction = False
         self._init_schema()
 
     @property
@@ -32,7 +33,23 @@ class SQLiteStore(RelationalStore):
         return self._conn.execute(sql, params)
 
     def _commit(self):
-        self._conn.commit()
+        if not self._in_transaction:
+            self._conn.commit()
+
+    @contextmanager
+    def transaction(self):
+        if self._in_transaction:
+            raise RuntimeError('Nested database transaction is not supported')
+        self._conn.execute('BEGIN IMMEDIATE')
+        self._in_transaction = True
+        try:
+            yield
+            self._conn.commit()
+        except BaseException:
+            self._conn.rollback()
+            raise
+        finally:
+            self._in_transaction = False
 
     def _upsert(self, table, columns, values, keys, updates):
         names=','.join(columns)
