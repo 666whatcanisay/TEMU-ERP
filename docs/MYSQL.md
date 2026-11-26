@@ -2,6 +2,10 @@
 
 当前业务库 `temu_workbench`，默认 `127.0.0.1:3306`，结构版本 `20261126-relational-v2`。MySQL 8 / InnoDB / utf8mb4_bin，通过 PyMySQL 连接。关系图、表职责及面试讲法见 [数据库设计](DATABASE.md)。
 
+日常看库请在 Navicat 刷新后展开“视图”：`面试01_选品证据`、`面试02_商品成本`、`面试03_买手核价`；逐笔费用看 `明细_费用组成`，全部网址看 `明细_来源网址`。五个中文视图不可更新，自动查询业务原表，不是副本；金额显示两位小数、未知仍为 NULL。原表字段均带中文注释。
+
+中文展示另记 `presentation-zh/v1` 的可重复安装指纹，不修改已应用的核心迁移文件。旧安装若缺少视图替换权限，停止应用后运行 `python scripts/configure-mysql.py --refresh-grants --with-test-database`，输入原有 root 密码。脚本保留应用密码，仅在五个展示视图名称上补充 CREATE/DROP 权限，业务表不授予 DROP。MySQL 的视图替换也需要 DROP 权限，见 [MySQL 官方说明](https://dev.mysql.com/doc/refman/8.0/en/create-view.html)。普通启动不会要求 root 密码。
+
 ## 新环境
 
 先安装并启动 MySQL 8.0+、Python 3.11+：
@@ -17,7 +21,7 @@ python -m app.backend.api.server
 
 新空库首次启动会创建关系表和参数字典。环境变量优先于本机 JSON；`.env.example` 是变量说明，不会自动加载 `.env`。MySQL 连接失败不会静默切回 SQLite。
 
-也可使用已有授权账号设置 `WORKBENCH_MYSQL_HOST/PORT/USER/PASSWORD/DATABASE`。数据库需先创建；本地开发账号在该 schema 需要 SELECT、INSERT、UPDATE、DELETE、CREATE、INDEX、ALTER、CREATE VIEW、SHOW VIEW。旧表改名归档另需 MySQL RENAME 所要求的权限，建议通过一次性管理员迁移完成。
+也可使用已有授权账号设置 `WORKBENCH_MYSQL_HOST/PORT/USER/PASSWORD/DATABASE`。数据库需先创建；本地开发账号在该 schema 需要 SELECT、INSERT、UPDATE、DELETE、CREATE、INDEX、ALTER、CREATE VIEW、SHOW VIEW，并对上述五个中文展示视图拥有 DROP。旧表改名归档另需 MySQL RENAME 所要求的权限，建议通过一次性管理员迁移完成。
 
 ## 已有 MySQL v1 升级
 
@@ -80,7 +84,7 @@ SQLite 显式回退使用 `WORKBENCH_DB_DRIVER=sqlite`，它只能看到那份 S
 
 ## 测试
 
-基础80项不需要MySQL。真实集成23项必须明确启用，测试库名以 `_test` 或 `_ci` 结尾且不同于工作库；测试会重置测试库的关系数据，禁止指向业务库。
+基础80项不需要MySQL。真实集成26项必须明确启用，测试库名以 `_test` 或 `_ci` 结尾且不同于工作库；测试会重置测试库的关系数据，禁止指向业务库。
 
 ```powershell
 python scripts/configure-mysql.py --with-test-database

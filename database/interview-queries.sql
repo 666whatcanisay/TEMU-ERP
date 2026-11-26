@@ -1,5 +1,19 @@
 -- Navicat 演示用，只读。选择 temu_workbench 后逐条执行。
 
+-- 面试先看这三个中文视图，每行含商品名称，金额按分显示。
+SELECT * FROM `面试01_选品证据` ORDER BY `商品编号`;
+SELECT * FROM `面试02_商品成本` ORDER BY `商品编号`;
+SELECT * FROM `面试03_买手核价` ORDER BY `记录时间_UTC` DESC;
+
+-- sku_costs 的中文明细：每笔费用及依据。
+SELECT * FROM `明细_费用组成`
+WHERE `商品编号`='DE-DRAWER-006' ORDER BY `显示顺序`;
+
+-- 全部来源网址，包括尚未关联商品的规则依据。
+SELECT * FROM `明细_来源网址` ORDER BY `来源编号`;
+
+-- 以下为深入追问时使用的原字段查询。
+
 -- 1 商品主档：不需要解析JSON才能看名字。
 SELECT product_id,title,research_market,material,internal_decision,created_at
 FROM products ORDER BY updated_at DESC;

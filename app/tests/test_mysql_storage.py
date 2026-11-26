@@ -31,6 +31,59 @@ class MySQLStorageTests(contract.StorageTests):
         self.assertEqual(len(self.store.list_records('candidate')),2)
         self.assertEqual(self.store.get_record('candidate','Case-A')['title'],'收纳盒📦')
 
+    def test_chinese_cost_views_preserve_unknowns_units_and_source_values(self):
+        from decimal import Decimal
+        candidate=contract.candidate_record();candidate['title']='六件收纳盒'
+        self.assertEqual(self.store.upsert_record(candidate),[])
+        view=self.store._execute('SELECT * FROM `面试02_商品成本`').fetchone()
+        self.assertIsNone(view['五项基础成本合计'])
+        self.assertEqual(view['计价单位'],'每套')
+        sku=candidate['skus'][0]
+        sku['supply_income'].update(amount='24.00',confirmed=True,source_ref='报价单')
+        for i,cost in enumerate(sku['costs'],1):
+            cost['money'].update(amount=f'{i}.00',confirmed=True,source_ref='成本单')
+        self.assertEqual(self.store.upsert_record(candidate),[])
+        view=self.store._execute('SELECT * FROM `面试02_商品成本`').fetchone()
+        self.assertEqual(view['五项基础成本合计'],Decimal('15.00'))
+        self.assertEqual(view['原供货报价'],Decimal('24.00'))
+        detail=self.store._execute('SELECT * FROM `明细_费用组成` ORDER BY `显示顺序`').fetchall()
+        self.assertEqual(detail[0]['商品名称'],'六件收纳盒')
+        self.assertEqual(detail[0]['费用名称'],'商品采购')
+        self.assertEqual(detail[0]['币种'],'人民币')
+        self.assertEqual(str(detail[0]['金额']),'1.00')
+        self.store._execute("UPDATE sku_costs SET currency='EUR' WHERE cost_key='purchase'")
+        self.assertIsNone(self.store._execute('SELECT * FROM `面试02_商品成本`').fetchone()['五项基础成本合计'])
+
+    def test_chinese_evidence_is_traceable_and_read_only(self):
+        candidate=contract.candidate_record();candidate['evidence_refs']=['SRC-1','NOT-RESOLVED']
+        self.store.upsert_record(candidate)
+        self.store.upsert_record(dict(record_type='source',id='SRC-1',title='页面证据',
+            url='https://example.com/product',locator='规格区',verification='needs_review'))
+        rows=self.store._execute('SELECT * FROM `面试01_选品证据` ORDER BY `来源编号`').fetchall()
+        self.assertEqual(rows[0]['关联情况'],'引用未解析')
+        self.assertEqual(rows[1]['原始网址'],'https://example.com/product')
+        self.assertEqual(rows[1]['核验说明'],'待核对')
+        self.assertEqual(rows[1]['网页存档状态'],'未登记网页快照')
+        import pymysql
+        with self.assertRaises(pymysql.Error):
+            self.store._execute("UPDATE `明细_来源网址` SET `原始网址`='https://invalid.example'")
+        self.assertEqual(self.store.get_record('source','SRC-1')['url'],'https://example.com/product')
+
+    def test_repeatable_chinese_metadata_keeps_business_rows_and_precision(self):
+        from app.backend.adapters.mysql_chinese import VERSION,VIEWS,ensure_chinese_presentation
+        self.store.upsert_record(contract.candidate_record())
+        before=self.store.export_relational_state()['sha256']
+        self.store._execute('DELETE FROM schema_migrations WHERE version=?',(VERSION,))
+        self.assertTrue(ensure_chinese_presentation(self.store))
+        self.assertFalse(ensure_chinese_presentation(self.store))
+        self.assertEqual(self.store.export_relational_state()['sha256'],before)
+        column=self.store._execute("SELECT COLUMN_TYPE,COLUMN_COMMENT FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='sku_costs' AND column_name='amount'").fetchone()
+        self.assertEqual(column['COLUMN_TYPE'],'decimal(30,12)')
+        self.assertIn('费用金额',column['COLUMN_COMMENT'])
+        for name in VIEWS:
+            row=self.store._execute('SELECT IS_UPDATABLE FROM information_schema.views WHERE table_schema=DATABASE() AND table_name=?',(name,)).fetchone()
+            self.assertEqual(row['IS_UPDATABLE'],'NO')
+
     def test_all_five_tables_migrate_losslessly_and_do_not_overwrite(self):
         source=SQLiteStore(Path(self.tmp.name)/'source.db')
         try:

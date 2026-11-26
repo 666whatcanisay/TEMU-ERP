@@ -6,9 +6,12 @@ import os
 from pathlib import Path
 import re
 import secrets
+import sys
 import pymysql
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from app.backend.adapters.mysql_chinese import VIEWS
 
 def main():
     parser = argparse.ArgumentParser()
@@ -16,6 +19,7 @@ def main():
     parser.add_argument('--port',default=3306,type=int)
     parser.add_argument('--database',default='temu_workbench')
     parser.add_argument('--with-test-database',action='store_true')
+    parser.add_argument('--refresh-grants',action='store_true',help='Preserve the app secret and refresh only project-scoped grants')
     args = parser.parse_args()
     if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]{0,57}',args.database):
         raise SystemExit('Use a short SQL identifier for the database name.')
@@ -26,7 +30,7 @@ def main():
         if saved.get('host')==args.host and saved.get('port')==args.port and saved.get('database')==args.database:
             connection = pymysql.connect(**{k:saved[k] for k in ('host','port','user','password','database')})
             connection.close()
-            if not args.with_test_database:
+            if not args.with_test_database and not args.refresh_grants:
                 print('Existing working app credentials preserved.')
                 return
         else:
@@ -51,6 +55,10 @@ def main():
                 databases.append(test_name)
             for database in databases:
                 cursor.execute(f'GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,INDEX,ALTER,CREATE VIEW,SHOW VIEW ON `{database}`.* TO %s@%s',(user,'localhost'))
+                # MySQL requires DROP even for CREATE OR REPLACE VIEW. Scope it
+                # to these presentation views, never grant DROP on business tables.
+                for view in VIEWS:
+                    cursor.execute(f'GRANT CREATE,DROP ON `{database}`.`{view}` TO %s@%s',(user,'localhost'))
         settings = dict(driver='mysql',host=args.host,port=args.port,user=user,password=app_password,database=args.database)
         check = pymysql.connect(**{k:settings[k] for k in ('host','port','user','password','database')})
         check.close()

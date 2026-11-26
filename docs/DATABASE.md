@@ -18,7 +18,7 @@ MySQL 业务库：`temu_workbench`，`127.0.0.1:3306`。当前版本 `20261126-r
 
 ## 实际表与职责
 
-当前是 **21 张业务/字典表 + 1 张迁移记录表、19 条外键、4 个查询视图**。SQLite 保留原结构用于兼容迁移及基础测试，不是 MySQL 的同步副本。
+当前是 **21 张业务/字典表 + 1 张迁移记录表、19 条外键、9 个查询视图（5 中文 + 4 技术）**。SQLite 保留原结构用于兼容迁移及基础测试，不是 MySQL 的同步副本。
 
 | 模块 | 表 | 关键设计 |
 |---|---|---|
@@ -40,21 +40,31 @@ MySQL 业务库：`temu_workbench`，`127.0.0.1:3306`。当前版本 `20261126-r
 
 ## 在 Navicat 怎么展示
 
-1. 打开 `products`：商品名称、市场和决定不再藏在 JSON。
-2. 打开 `product_skus` 和 `sku_costs`：展示商品一对多 SKU、SKU 一对多费用。
-3. 打开 `sources`：直接看到 `url`、出处级别和观察日期。
-4. 打开视图 `v_product_evidence`：把商品、来源网址和网页哈希一次关联出来。
-5. 打开 `v_buyer_quote_history`：展示原始反馈、SKU 和核价历史。
-6. 打开 `schema_migrations` 与旧表归档：解释如何保留数据完成升级。
+**刷新 `temu_workbench`，展开左侧“视图”，双击下列中文名称。** 展开“表”仍是开发用的英文原表。
+
+| 顺序 | 直接打开 | 看什么、怎么讲 |
+|---|---|---|
+| 1 | `面试01_选品证据` | 商品名、原始网址、原文定位、核验说明、网页存档；解释“凭什么选” |
+| 2 | `面试02_商品成本` | 商品/SKU、每套或每件、原供货报价、五项基础成本；解释“成本从哪里来” |
+| 3 | `面试03_买手核价` | 买手建议价、反馈原话、凭证与核验状态；解释“核价如何影响决策” |
+| 补充 | `明细_费用组成` | 逐笔商品采购、包装耗材、国内运费、售后准备、其他变动费用 |
+| 补充 | `明细_来源网址` | 全部来源网址和核验说明，包括尚未关联商品的参考资料 |
+
+中文视图自动读取当前业务表，不是另存一份中文数据。`商品编号`、`商家SKU` 保留原始编码，用来关联记录；名称、费用和状态直接显示中文。金额按两位小数展示，原始金额仍以 `DECIMAL(30,12)` 精度保存，未知金额仍为 NULL。
+
+例如 `purchase / 8.400000000000 / CNY / set` 显示为 **商品采购 / 8.40 / 人民币 / 每套**。`confirmed=1` 只表示人工确认了输入，不代表平台背书或真实结算已经发生。
+
+**口径别混淆：** 五项基础成本不是完整成本。工作台完整净收益还考虑风险、服务费、分摊、资金和税费。`expected_after_sales` 是旧五项口径中的售后准备，不能再次叠加到完整利润模型。原供货报价也不等于买手建议价。
 
 ```sql
-SELECT product_id, product_title, source_title, url,
-       verification, snapshot_file, hash_verified
-FROM v_product_evidence
-WHERE product_id = 'DE-DRAWER-006';
+SELECT * FROM `面试01_选品证据` WHERE `商品编号`='DE-DRAWER-006';
+SELECT * FROM `明细_费用组成` WHERE `商品编号`='DE-DRAWER-006'
+ORDER BY `显示顺序`;
 ```
 
-其余可直接执行的查询见 [interview-queries.sql](../database/interview-queries.sql)。查询都是只读 SELECT，不改工作数据。
+面试追问代码结构时再看英文原表，全部业务列已有中文注释。中文视图使用不可更新的 TEMPTABLE 算法，修改商品仍从工作台进行。其余查询见 [interview-queries.sql](../database/interview-queries.sql)。
+
+中文展示由 [可重复安装的视图定义](../database/repeatable/R__chinese_views.sql) 和 `mysql_chinese.py` 管理，单独记录 `presentation-zh/v1` 指纹；核心迁移文件不修改。程序启动时检测安装，仅改注释和视图，不改业务行。MySQL DDL 会隐式提交，失败可重复安装，不把它说成可事务回滚。
 
 ## 为什么保留部分 JSON
 

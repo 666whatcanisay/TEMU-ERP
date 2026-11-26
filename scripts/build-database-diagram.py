@@ -23,7 +23,7 @@ def edge(path,label,x,y):
 def build():
     items=[f'<rect width="1440" height="1120" rx="24" fill="#f6f8fc"/>',
         text(40,55,'MySQL 业务数据库',34,bold=True),text(40,92,'商品 · SKU · 成本 · 证据 · 买手核价 · 内部提报',21,'#65778c'),
-        text(40,126,'21 张业务/字典表 + 1 张版本表  /  19 条外键  /  4 个查询视图',16,'#bd4c10')]
+        text(40,126,'21 张业务/字典表 + 1 张版本表  /  19 条外键  /  9 个查询视图（5 中文 + 4 技术）',16,'#bd4c10')]
     positions=[
         (40,160,'证据与规则来源','sources',['PK source_id','url / level / verification','观察价格、币种、日期']),
         (545,160,'商品主档','products',['PK product_id','名称 / 市场 / 内部决定','平台 ID 保留原始字符串']),

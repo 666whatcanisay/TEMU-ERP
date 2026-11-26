@@ -45,7 +45,11 @@ class MySQLStore(EntityRepositories,RelationalStore):
         self._settings=dict(host=host,port=int(port),user=user,password=password,database=database)
         self._lock=threading.RLock();self._in_transaction=False;self._conn=None
         self._connect()
-        try:self._init_schema(allow_legacy)
+        try:
+            self._init_schema(allow_legacy)
+            if self._schema_ready:
+                from .mysql_chinese import ensure_chinese_presentation
+                ensure_chinese_presentation(self)
         except BaseException:
             self.close();raise
 
