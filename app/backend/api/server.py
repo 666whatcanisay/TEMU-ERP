@@ -62,6 +62,14 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
         parts = self._route(path)
+        documents={
+            '/database':config.ROOT/'docs/DATABASE_TOUR.html',
+            '/assets/database-er.svg':config.ROOT/'docs/assets/database-er.svg',
+            '/database/interview-queries.sql':config.ROOT/'database/interview-queries.sql',
+            '/database/migrations/002_relational_entities.sql':config.ROOT/'database/migrations/002_relational_entities.sql',
+        }
+        if path in documents:
+            return self._file(documents[path])
         if path in ("/", "/index.html"):
             return self._static("index.html")
         if parts and parts[0] == "static":
@@ -69,7 +77,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/health":
             ok = SERVICE.store.check_health()
             return self._send_json({"ok": ok, "mode": config.MODE,
-                                    "database":config.database_info(),
+                                    "database":{**config.database_info(),"schema_version":getattr(SERVICE.store,'schema_version','sqlite-v1')},
                                     "live_write_enabled": config.LIVE_WRITE_ENABLED},200 if ok else 503)
         if path == "/api/meta":
             return self._send_json(SERVICE.registry())
@@ -96,9 +104,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def _static(self, rel: str) -> None:
         candidate = (STATIC_DIR / rel).resolve()
-        if not str(candidate).startswith(str(STATIC_DIR.resolve())) or not candidate.is_file():
+        if not candidate.is_relative_to(STATIC_DIR.resolve()) or not candidate.is_file():
             self._send_json({"error": "not found"}, 404)
             return
+        return self._file(candidate)
+
+    def _file(self,candidate: Path) -> None:
+        if not candidate.is_file():
+            return self._send_json({'error':'not found'},404)
         ctype, _ = mimetypes.guess_type(str(candidate))
         body = candidate.read_bytes()
         self.send_response(200)

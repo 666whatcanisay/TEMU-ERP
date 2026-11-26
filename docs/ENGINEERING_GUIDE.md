@@ -37,11 +37,11 @@ profit-popover.js：鼠标、键盘、点击和定位
 
 [存储测试](../app/tests/test_storage.py) 的 `test_failed_candidate_save_rolls_back_revision_and_record` 在历史写入后强制中断最终保存：验证商品和历史不变，再恢复保存检查历史。[MySQL 测试](../app/tests/test_mysql_storage.py) 继承该契约，在 InnoDB 上实际运行。
 
-## 数据库：共享语义，隔离引擎差异
+## 数据库：关系实体与DTO兼容
 
-[storage_relational.py](../app/backend/adapters/storage_relational.py) 维护记录与修订语义，[storage_mysql.py](../app/backend/adapters/storage_mysql.py) 处理参数化 SQL、连接、事务和备份。JSON 载荷保留未知字段和字符串 ID，索引列用于查找。此取舍迁移成本低，但尚未将所有属性规范化为独立关系表。
+[mysql_entities.py](../app/backend/adapters/mysql_entities.py) 读写商品、SKU、成本、证据、核价等关系实体；[relational_codec.py](../app/backend/adapters/relational_codec.py) 从关系列重建现有DTO，保留未知扩展、缺失/null区别与数字格式。核心金额、网址和规格已经拆列和拆子表，不以通用JSON作为商品主档。[storage_mysql.py](../app/backend/adapters/storage_mysql.py) 处理参数化SQL、事务和完整备份。
 
-[storage_state.py](../app/backend/adapters/storage_state.py) 定义五表备份及摘要。SQLite 保留迁移、显式回退和基础测试路径。详见 [MySQL](MYSQL.md)。
+[storage_state.py](../app/backend/adapters/storage_state.py) 保留旧五表交换格式，用于SQLite迁移与兼容对账。MySQL v2完整备份使用全部21张业务/字典表，包含统一来源、SKU子表和参数字典；旧格式不等于全量实体备份。[数据库设计](DATABASE.md) · [迁移与恢复](MYSQL.md)。
 
 ## 依据：出处能支持什么
 

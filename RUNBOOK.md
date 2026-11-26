@@ -23,6 +23,8 @@ powershell -ExecutionPolicy Bypass -File scripts/start-workbench.ps1
 
 业务数据位于MySQL的`temu_workbench`库，完整JSON备份位于`data/backups/*.mysql.json`，页面快照在`.cache/workbench/`。本机配置、备份、旧SQLite文件与缓存均不提交Git。设置抽屉显示当前数据库，备份列表只提供当前引擎格式，恢复验证失败保留现有数据。
 
+当前MySQL为关系实体v2：商品`products`、SKU`product_skus`、成本`sku_costs`、网址`sources.url`。在Navicat打开`v_product_evidence`视图可以直接关联商品和出处。规则登记也已入库；网页原文件除`.cache/workbench`外还可保留在原有`.cache/profit-evidence`和`.cache/case-evidence`路径，统一由`source_snapshots`索引。完整备份覆盖21张业务/字典表，网页文件本体需另行备份。[数据库说明](docs/DATABASE.md)
+
 ## 五个案例是什么
 
 它们研究德国市场收纳用品。商品公开规格和观察日期有出处；采购报价、公司开支、退回及扣款概率、公司门槛和买手反馈是案例假设。运行后六件套当前核价21元、基准预算净收益4.48元、保守2.13元，完整口径见 [利润模型](docs/PROFIT_MODEL.md)。

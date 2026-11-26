@@ -59,7 +59,7 @@ HTML、JSON 和只读字段填写计划复用同一份资料，集中展示待�
 | 一次核价影响全部变体 | SKU 级反馈与独立重算 | 关联商家 SKU、保留原价与反馈历史 |
 | 商品资料分散、重复整理 | 多 SKU、材料登记、内部评审导出 | 资料、计算和导出共享业务数据 |
 | 修改历史与商品保存不同步 | 商品和修订历史原子保存 | 同事务提交，失败一起回滚 |
-| 换数据库要重写业务 | MySQL 主存储、迁移与恢复 | 存储适配器隔离，五表摘要对账 |
+| 商品和证据难直接查库 | 关系实体、来源网址列、4 个查询视图 | 19 条外键、定点金额、迁移摘要对账 |
 
 ## 业务工作流
 
@@ -104,6 +104,14 @@ HTML、JSON 和只读字段填写计划复用同一份资料，集中展示待�
 
 分层单体，业务计算不依赖数据库与浏览器。SQLite 保留用于旧数据迁移、显式回退和基础测试；**默认使用 MySQL，连接失败不会静默改用 SQLite**。[架构说明](docs/ARCHITECTURE.md)
 
+### 业务数据库
+
+![商品、SKU、成本、证据与买手反馈的数据库核心关系](docs/assets/database-er.svg)
+
+MySQL 使用 **21 张业务/字典表 + 1 张版本表、19 条外键、4 个查询视图**。商品、SKU、基础成本、规格、完整利润参数、来源、快照、反馈与历史提报分别存储；核心金额和网址不再藏在通用 JSON 中。扩展 JSON 保留未建模字段，历史评审保留生成当时的快照。
+
+旧结构迁移保留 12 个候选的全部利润结果，31 条来源集中入库，5 份网页文件补齐索引并核对哈希，原五表改名归档。[数据库设计与面试说明](docs/DATABASE.md) · [只读演示 SQL](database/interview-queries.sql) · [建表 SQL](database/migrations/002_relational_entities.sql)
+
 ## 设计取舍
 
 **一份计算结果服务多个界面。** 后端输出结构化费用行，图表、浮层与评审单消费同一结果，避免前端另算金额。[计算规则](app/backend/domain/profit_model.py) · [图表渲染](app/frontend/static/profit-view.js)
@@ -144,13 +152,13 @@ Windows 可运行 `powershell -ExecutionPolicy Bypass -File scripts/start-workbe
 python scripts/migrate-sqlite-to-mysql.py --app-stopped
 ```
 
-先备份原库，五表同事务迁移并摘要对账；拒绝覆盖非空库。完整 JSON 备份包含记录、修订、提报、快照和适配器状态，损坏或中途失败不会留下半恢复数据。[迁移与恢复](docs/MYSQL.md)
+先备份原库，将旧五表转换为关系实体并摘要对账；拒绝覆盖非空库。MySQL v2 完整备份包含全部 21 张业务/字典表，损坏或中途失败不会留下半恢复数据。已有 MySQL v1 数据库应执行 `python scripts/upgrade-database-v2.py --app-stopped --admin`，详见[迁移与恢复](docs/MYSQL.md)。
 
 </details>
 
 ## 验证与边界
 
-**76 项应用基础 + 12 项真实 MySQL 集成 + 24 项 starter 领域测试，共 112 项。** 无 MySQL 环境时，12 项集成测试明确跳过，不能算作通过。CI 在 Windows、Ubuntu 运行基础测试，另用 MySQL 容器运行集成测试。
+**80 项应用基础 + 23 项真实 MySQL 集成 + 24 项 starter 领域测试，共 127 项。** 无 MySQL 环境时，23 项集成测试明确跳过，不能算作通过。CI 在 Windows、Ubuntu 运行基础测试，另用 MySQL 容器运行集成测试。
 
 ```bash
 python -m unittest discover -s app/tests -v
@@ -177,7 +185,7 @@ python -m unittest discover -s tests -v
 | 4.48 元怎么来的？ | [profit_model.py](app/backend/domain/profit_model.py) 的 `scenario` / `evaluate_full` | [利润模型](docs/PROFIT_MODEL.md)、[算例测试](app/tests/test_full_profit.py) |
 | 核价为何只影响一个 SKU？ | [services.py](app/backend/application/services.py) 的 `_latest_buyer_income` / `sku_view` | [用例测试](app/tests/test_services.py) |
 | 保存与历史怎样一致？ | [services.py](app/backend/application/services.py) 的 `save_candidate` | [存储测试](app/tests/test_storage.py)、[MySQL 测试](app/tests/test_mysql_storage.py) |
-| 换数据库为何不用重写图表？ | [共享语义](app/backend/adapters/storage_relational.py)、[MySQL](app/backend/adapters/storage_mysql.py) | [架构](docs/ARCHITECTURE.md)、[迁移脚本](scripts/migrate-sqlite-to-mysql.py) |
+| 关系表如何兼容现有工作流？ | [实体仓库](app/backend/adapters/mysql_entities.py)、[DTO重建](app/backend/adapters/relational_codec.py) | [数据库设计](docs/DATABASE.md)、[升级脚本](scripts/upgrade-database-v2.py) |
 | 来源如何避免变成假事实？ | [evidence.py](app/backend/domain/evidence.py)、[规则提取](app/backend/adapters/extraction_rules.py) | [来源](research/sources.json)、[映射候选](contracts/temu_field_map.json) |
 | 页面如何保持简洁？ | [workflow.js](app/frontend/static/workflow.js)、[profit-popover.js](app/frontend/static/profit-popover.js) | [工程指南](docs/ENGINEERING_GUIDE.md) |
 
@@ -188,6 +196,7 @@ python -m unittest discover -s tests -v
 - [工程阅读指南](docs/ENGINEERING_GUIDE.md)：UI、用例、领域与存储如何协作。
 - [启动指南](docs/SETUP.md) / [操作手册](RUNBOOK.md)：环境、配置和故障定位。
 - [架构](docs/ARCHITECTURE.md) / [利润模型](docs/PROFIT_MODEL.md) / [MySQL](docs/MYSQL.md)：实现依据。
+- [数据库与面试说明](docs/DATABASE.md)：核心关系、设计取舍、迁移验收和一分钟讲法。
 - [本轮检查](docs/PROJECT_REVIEW.md)：参考、修复、验证与未解决边界。
 - [第三方资料](docs/THIRD_PARTY.md)：资料用途和许可边界。
 

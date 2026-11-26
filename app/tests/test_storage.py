@@ -50,6 +50,7 @@ class StorageTests(unittest.TestCase):
         self.assertIsInstance(loaded["platform_product_id"], str)
 
     def test_revision_history(self):
+        self.store.upsert_record(candidate_record())
         self.store.add_revision("TEST-001", "TEST-SKU-1", "supply_income", None, "28.00", "tester", "manual")
         history = self.store.revision_history("TEST-001")
         self.assertEqual(len(history), 1)

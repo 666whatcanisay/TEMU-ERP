@@ -63,9 +63,14 @@ def check():
             failures.append(f'invalid diagram: {name}')
         if root.find('{http://www.w3.org/2000/svg}title') is None:
             failures.append(f'missing accessible title: {name}')
+    database=ET.parse(ROOT/'docs/assets/database-er.svg').getroot()
+    if database.tag!='{http://www.w3.org/2000/svg}svg' or not database.get('viewBox'):
+        failures.append('invalid database diagram')
+    for name in ('docs/DATABASE_TOUR.html','database/migrations/002_relational_entities.sql','database/interview-queries.sql'):
+        if not (ROOT/name).is_file():failures.append(f'missing database artifact: {name}')
     if failures:
         raise SystemExit('\n'.join(failures))
-    print(f'Documentation OK: {len(docs)} Markdown files, {links} links, 5 screenshots, 3 SVG diagrams; external URLs not fetched.')
+    print(f'Documentation OK: {len(docs)} Markdown files, {links} links, 5 screenshots, 4 SVG diagrams; external URLs not fetched.')
 
 
 if __name__ == '__main__':

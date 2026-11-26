@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from app.backend import config
 from app.backend.adapters import storage_state
@@ -92,3 +93,113 @@ class MySQLStorageTests(contract.StorageTests):
                 self.assertEqual(report['errors'],[])
                 self.assertEqual(target.get_record('candidate','DE-DRAWER-006')['skus'],detail['candidate']['skus'])
             finally:target.close()
+
+    def test_typed_sql_columns_are_the_application_source_of_truth(self):
+        row=contract.candidate_record();row['title']='原标题'
+        row['skus'][0]['supply_income']['amount']='28.00'
+        self.store.upsert_record(row)
+        self.store._execute('UPDATE products SET title=? WHERE product_id=?',('SQL更新标题','TEST-001'))
+        self.store._execute('UPDATE product_skus SET supply_amount=? WHERE product_id=? AND merchant_sku=?',('31.50','TEST-001','TEST-SKU-1'))
+        loaded=self.store.get_record('candidate','TEST-001')
+        self.assertEqual(loaded['title'],'SQL更新标题')
+        self.assertEqual(loaded['skus'][0]['supply_income']['amount'],'31.50')
+        extension=json.loads(self.store._row('products',{'product_id':'TEST-001'})['extension_json'])['data']
+        self.assertNotIn('title',extension);self.assertNotIn('skus',extension)
+
+    def test_many_to_many_evidence_and_unresolved_refs_have_visible_status(self):
+        row=contract.candidate_record();row['evidence_refs']=['SRC-REAL','SRC-MISSING']
+        self.store.upsert_record(row)
+        source={'record_type':'source','id':'SRC-REAL','url':'https://example.com/evidence','title':'出处','locator':'product details','verification':'needs_review'}
+        self.store.upsert_record(source)
+        rows=self.store._execute('SELECT source_ref,url,link_status FROM v_product_evidence ORDER BY source_ref').fetchall()
+        self.assertEqual(rows[0]['link_status'],'unresolved')
+        self.assertEqual(rows[1]['url'],source['url'])
+        other=contract.candidate_record('TEST-002');other['evidence_refs']=['SRC-REAL'];self.store.upsert_record(other)
+        self.assertEqual(len(self.store._execute('SELECT * FROM product_evidence WHERE source_id=?',('SRC-REAL',)).fetchall()),2)
+
+    def test_foreign_keys_reject_orphans_and_cost_keys_are_unique(self):
+        import pymysql
+        with self.assertRaises(pymysql.IntegrityError):
+            self.store._execute('INSERT INTO product_evidence(product_id,position,source_ref) VALUES(?,?,?)',('NO-PRODUCT',0,'X'))
+        self.store.upsert_record(contract.candidate_record())
+        with self.assertRaises(pymysql.IntegrityError):
+            self.store._execute('INSERT INTO sku_costs(product_id,merchant_sku,cost_key,position,extension_json) VALUES(?,?,?,?,?)',('TEST-001','TEST-SKU-1','purchase',0,'{}'))
+        self.assertIsNone(self.store._execute('SELECT five_cost_total FROM v_sku_cost_summary').fetchone()['five_cost_total'])
+
+    def test_mid_child_write_failure_rolls_back_product_sku_cost_and_audit(self):
+        import pymysql
+        service=WorkbenchService(self.store);service.save_candidate(contract.candidate_record())
+        before=self.store.export_relational_state()
+        changed=self.store.get_record('candidate','TEST-001');changed['title']='Should roll back'
+        changed['skus'][0]['costs'][1]['money']['amount']='3.50'
+        original=self.store._execute
+        def interrupt(sql,params=()):
+            if sql.startswith('INSERT INTO `sku_costs`') and 'packaging' in params:
+                raise pymysql.OperationalError(9999,'injected child write failure')
+            return original(sql,params)
+        with patch.object(self.store,'_execute',side_effect=interrupt):
+            with self.assertRaises(pymysql.OperationalError):service.save_candidate(changed,'tester')
+        self.assertEqual(self.store.export_relational_state()['sha256'],before['sha256'])
+
+    def test_removed_sku_is_inactive_and_pricing_history_keeps_its_foreign_key(self):
+        row=contract.candidate_record();second=copy.deepcopy(row['skus'][0]);second['merchant_sku']='TEST-SKU-2';row['skus'].append(second)
+        self.store.upsert_record(row)
+        feedback={'record_type':'feedback','id':'FB-KEEP','candidate_id':row['id'],'sku_ref':'TEST-SKU-2',
+                  'platform_stage':'pricing','verification':'draft','feedback_text':'history'}
+        self.assertEqual(self.store.upsert_record(feedback),[])
+        row['skus'].pop();self.store.upsert_record(row)
+        self.assertEqual(len(self.store.get_record('candidate',row['id'])['skus']),1)
+        self.assertFalse(self.store._row('product_skus',{'product_id':row['id'],'merchant_sku':'TEST-SKU-2'})['is_active'])
+        self.assertEqual(self.store._row('buyer_feedback',{'feedback_id':'FB-KEEP'})['linked_sku'],'TEST-SKU-2')
+
+    def test_reference_sources_and_inactive_rows_survive_complete_v2_backup(self):
+        self.store.upsert_record(contract.candidate_record())
+        self.store.ensure_reference_sources([dict(id='RULE-1',url='https://example.com/rule',title='规则',level='official_policy',locator='section',verification='needs_review')])
+        before=self.store.export_relational_state()
+        backup=Path(self.tmp.name)/'relational.mysql.json';self.store.backup(backup)
+        state=json.loads(backup.read_text());self.assertEqual(state['format'],'temu-workbench-relational/v2')
+        self.store.upsert_record(contract.candidate_record('NEW'))
+        self.assertEqual(self.store.restore(backup),[])
+        self.assertEqual(self.store.export_relational_state()['sha256'],before['sha256'])
+        self.assertEqual(self.store.reference_sources()[0]['id'],'RULE-1')
+
+    def test_corrupt_v2_backup_and_fk_failure_preserve_every_entity(self):
+        from app.backend.adapters.storage_mysql import relational_digest
+        self.store.upsert_record(contract.candidate_record())
+        before=self.store.export_relational_state();bad=copy.deepcopy(before)
+        bad['tables']['product_evidence']=[dict(product_id='MISSING',position=0,source_ref='REF',source_id=None)]
+        bad['sha256']=relational_digest(bad['tables'])
+        self.assertTrue(self.store.restore(self._write_backup(bad)))
+        self.assertEqual(self.store.export_relational_state()['sha256'],before['sha256'])
+
+    def test_registry_bootstrap_does_not_overwrite_business_observations(self):
+        source=dict(record_type='source',id='SAME',url='https://example.com/product',title='商品证据',locator='details',verification='needs_review')
+        self.store.upsert_record(source)
+        self.store.ensure_reference_sources([dict(id='SAME',url='https://example.com/policy',title='规则登记')])
+        self.assertEqual(self.store.get_record('source','SAME'),source)
+        self.assertEqual(self.store.reference_sources()[0]['title'],'规则登记')
+        self.store.ensure_reference_sources([dict(id='SAME',title='不应覆盖')])
+        self.assertEqual(self.store.reference_sources()[0]['title'],'规则登记')
+
+    def test_historical_submission_cannot_be_overwritten(self):
+        self.store.upsert_record(contract.candidate_record())
+        submission=dict(id='SUB-KEEP',candidate_id='TEST-001',title='旧评审',created_at='2026-11-26T10:00:00+08:00')
+        self.store.save_submission(submission)
+        with self.assertRaisesRegex(ValueError,'cannot be overwritten'):
+            self.store.save_submission({**submission,'title':'新内容'})
+        self.assertEqual(self.store.list_submissions()[0],submission)
+
+    def test_model_dictionary_drift_is_rejected_instead_of_silently_used(self):
+        self.store._execute('UPDATE profit_parameter_definitions SET default_value=? WHERE parameter_key=?',('99','refund_percent'))
+        with self.assertRaisesRegex(RuntimeError,'参数字典'):
+            self.store.validate_parameter_definitions()
+        self.store.ensure_parameter_definitions()
+        self.store.validate_parameter_definitions()
+
+    def test_incompatible_model_dictionary_backup_is_rolled_back(self):
+        from app.backend.adapters.storage_mysql import relational_digest
+        before=self.store.export_relational_state();bad=copy.deepcopy(before)
+        bad['tables']['profit_parameter_definitions'][0]['default_value']='999.000000000000'
+        bad['sha256']=relational_digest(bad['tables'])
+        self.assertTrue(self.store.restore(self._write_backup(bad)))
+        self.assertEqual(self.store.export_relational_state()['sha256'],before['sha256'])

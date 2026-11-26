@@ -680,7 +680,7 @@ function settingsDrawer() {
     <div class="ready-row"><span>${esc(key)}</span><span class="tag ${a.status === "succeeded" ? "good" : "warn"}">${esc(a.status)}</span></div>
   `).join("");
   return `
-    ${database?`<div class="callout"><strong>当前数据库：${database.engine==='mysql'?'MySQL':'SQLite'}</strong><p class="meta">${esc(database.location)} · 备份格式 ${database.engine==='mysql'?'MySQL完整JSON备份':'SQLite数据库文件'}</p></div>`:''}
+    ${database?`<div class="callout"><strong>当前数据库：${database.engine==='mysql'?'MySQL':'SQLite'}</strong><p class="meta">${esc(database.location)} · 备份格式 ${database.engine==='mysql'?'MySQL完整JSON备份':'SQLite数据库文件'}</p><a href="/database" target="_blank" rel="noopener">数据库关系图与查询说明</a></div>`:''}
     <h3>经营政策 ${helpButton("policy")}</h3>
     <div class="fields">
       <label class="field">口径

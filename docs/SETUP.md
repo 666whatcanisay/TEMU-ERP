@@ -63,6 +63,8 @@ cd starter
 python -m unittest discover -s tests -v
 ```
 
-基础 76 项、starter 24 项；未启用时另有 12 项真实 MySQL 测试显示 skipped。集成测试会清空独立测试库，必须按 [MySQL 说明](MYSQL.md) 配置，禁止指向工作库。CI MySQL 作业实际运行它们。
+基础 80 项、starter 24 项；未启用时另有 23 项真实 MySQL 测试显示 skipped。集成测试会清空独立测试库，必须按 [MySQL 说明](MYSQL.md) 配置，禁止指向工作库。CI MySQL 作业实际运行它们。
 
 旧数据迁移：停止应用，配置空目标库，执行 `python scripts/migrate-sqlite-to-mysql.py --app-stopped`。脚本备份旧库，完整迁移五表并摘要对账，恢复/回滚详见 [MySQL](MYSQL.md)。
+
+已有MySQL v1数据：停止应用后执行 `python scripts/upgrade-database-v2.py --app-stopped --admin`。脚本隐藏读取管理员密码，仅用于建结构与旧表归档，不保存密码。[关系图与面试讲法](DATABASE.md)。

@@ -50,7 +50,7 @@ def main():
                 cursor.execute(f'CREATE DATABASE IF NOT EXISTS `{test_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_bin')
                 databases.append(test_name)
             for database in databases:
-                cursor.execute(f'GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,INDEX,ALTER ON `{database}`.* TO %s@%s',(user,'localhost'))
+                cursor.execute(f'GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,INDEX,ALTER,CREATE VIEW,SHOW VIEW ON `{database}`.* TO %s@%s',(user,'localhost'))
         settings = dict(driver='mysql',host=args.host,port=args.port,user=user,password=app_password,database=args.database)
         check = pymysql.connect(**{k:settings[k] for k in ('host','port','user','password','database')})
         check.close()

@@ -22,7 +22,7 @@
 
 ## 验证与限制
 
-基础 76 项、真实 MySQL 12 项、starter 24 项。MySQL 仅在独立测试库执行。来源契约和文档另做脚本检查。远端结果见 [CI](https://github.com/666whatcanisay/TEMU-ERP/actions/workflows/ci.yml)。
+2026-11-24本轮原验证为基础76项、真实MySQL12项、starter24项。2026-11-26关系实体升级后扩展至基础80项、真实MySQL23项、starter24项。MySQL仅在独立测试库执行。来源契约和文档另做脚本检查，远端结果见[CI](https://github.com/666whatcanisay/TEMU-ERP/actions/workflows/ci.yml)。
 
 内嵌浏览器检查研究、图表、费用、反馈和评审。实际窗口内容宽约 632 像素，视口覆盖 API 未改变实际尺寸，不将本轮宣传成新增的桌面/手机双尺寸验收。[素材说明](assets/showcase/README.md)
 

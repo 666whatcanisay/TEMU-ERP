@@ -61,7 +61,11 @@ class WorkbenchService:
         self.rule_extractor = rule_extractor
         self.dsh = dsh
         self.deepseek = deepseek
-        self.registry_sources = registry_sources or []
+        if hasattr(store,'ensure_reference_sources'):
+            store.ensure_reference_sources(registry_sources or [])
+            self.registry_sources = store.reference_sources()
+        else:
+            self.registry_sources = registry_sources or []
         self.field_map = field_map or {}
         self._llm_calls = 0
 
@@ -91,7 +95,7 @@ class WorkbenchService:
             "adapter_statuses": self.store.adapter_statuses(),
             "dto_version": models.DTO_VERSION,
             'profit_schema':profit_model.SCHEMA,
-            'database':{'engine':self.store.engine,'location':self.store.location},
+            'database':{'engine':self.store.engine,'location':self.store.location,'schema_version':getattr(self.store,'schema_version','sqlite-v1')},
         }
 
     # ---------- policy ----------
@@ -673,7 +677,10 @@ class WorkbenchService:
         return self.store.backup(target_path)
 
     def restore(self, source_path: str) -> list[str]:
-        return self.store.restore(source_path)
+        errors=self.store.restore(source_path)
+        if not errors and hasattr(self.store,'ensure_reference_sources'):
+            self.store.ensure_reference_sources(self.registry_sources)
+        return errors
 
 
 def by_id_registry(sources: list[dict[str, Any]]) -> set[str]:
